@@ -13,7 +13,7 @@ import sys
 import uuid
 
 from build import ROOT, build
-from theme import read_style, palette_for, wallpaper_settings
+from theme import read_style, terminal_colors, wallpaper_settings
 import legacy
 
 UUID = 'notheme@local'
@@ -379,10 +379,9 @@ def apply(args):
         if 'terminal' in args.apps:
             profile = settings('org.gnome.Terminal.ProfilesList').get_string('default')
             path = f'/org/gnome/terminal/legacy/profiles:/:{profile}/'
-            palette = json.loads((ROOT / 'palette.json').read_text())
-            colors = palette_for(read_style(out / 'extension/schemas'))
+            colors = terminal_colors(read_style(out / 'extension/schemas'))
             for key, value in [('use-theme-colors', False), ('background-color', colors['background']),
-                               ('foreground-color', colors['foreground']), ('palette', palette['ansi']),
+                               ('foreground-color', colors['foreground']), ('palette', colors['ansi']),
                                ('use-system-font', False), ('font', 'Space Mono 11')]:
                 tx.set('org.gnome.Terminal.Legacy.Profile', key, value, path)
         obj = settings('org.gnome.shell')

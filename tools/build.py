@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from icons import build_icons
 from cursor import build_cursors
-from theme import read_style, render_css, application_css, wallpaper_svg, render_shell_css
+from theme import read_style, palette_for, terminal_colors, render_css, application_css, wallpaper_svg, render_shell_css
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -60,7 +60,7 @@ def build():
     def write_bytes(path, data):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
-    build_cursors(out / 'cursors', write_bytes, p['modes']['dark']['accent'])
+    build_cursors(out / 'cursors', write_bytes, palette_for(style)['accent'])
 
     icons = out / 'icons'
     build_icons(icons, write, style.get('theme-mode', 'dark'))
@@ -84,15 +84,17 @@ def build():
         write(out / f'wallpaper-{mode}.svg', wallpaper_svg({**style, 'theme-mode': mode}))
 
     apps = out / 'apps'
+    term = terminal_colors(style)
     kitty = ['# notheme: no fish dependency or generated Quickshell includes.',
              'font_family Space Mono', 'bold_font Space Mono Bold', 'font_size 11',
-             'background #000000', 'foreground #F2F2F2', 'cursor #F2F2F2',
-             'selection_background #F2F2F2', 'selection_foreground #000000',
+             f'background {term["background"]}', f'foreground {term["foreground"]}', f'cursor {term["cursor"]}',
+             f'selection_background {term["foreground"]}', f'selection_foreground {term["background"]}',
              'background_opacity 1', 'window_padding_width 18', 'cursor_shape block',
              'cursor_blink_interval 0', 'enable_audio_bell no']
-    kitty += [f'color{i} {color}' for i, color in enumerate(p['ansi'])]
+    kitty += [f'color{i} {color}' for i, color in enumerate(term['ansi'])]
     write(apps / 'kitty.conf', '\n'.join(kitty) + '\n')
     shutil.copytree(vendor / 'apps', apps, dirs_exist_ok=True)
     write(apps / 'zsh-theme.zsh', render_css((vendor / 'apps/zsh-theme.zsh').read_text(), style))
+    write(apps / 'btop/themes/notheme.theme', render_css((vendor / 'apps/btop/themes/notheme.theme').read_text(), style))
     write(apps / 'btop.conf', 'color_theme = "notheme"\n')
     return out

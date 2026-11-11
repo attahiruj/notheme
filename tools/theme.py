@@ -50,6 +50,25 @@ def palette_for(style, definition=None):
     return palette
 
 
+def terminal_colors(style, definition=None):
+    """Background, foreground, cursor and 16 ANSI colors for the current theme mode and family."""
+    definition = definition or json.loads((ROOT / 'palette.json').read_text())
+    palette = palette_for(style, definition)
+    light = style.get('theme-mode') == 'light'
+    mode = 'light' if light else 'dark'
+    surface = str(style.get('surface-color', '')).upper()
+    family = next((v[mode] for v in definition.get('families', {}).values()
+                   if v[mode]['surface'].upper() == surface), None)
+    if family:
+        # A theme family supplies its own text and ANSI colors.
+        return {'background': palette['background'], 'foreground': family['foreground'],
+                'cursor': family['foreground'], 'ansi': list(family['ansi'])}
+    ansi = list(definition['ansi-light' if light else 'ansi'])
+    ansi[1] = palette['accent']  # default theme: red follows the accent
+    return {'background': palette['background'], 'foreground': palette['foreground'],
+            'cursor': palette['foreground'], 'ansi': ansi}
+
+
 def render_css(css, style, definition=None):
     definition = definition or json.loads((ROOT / 'palette.json').read_text())
     palette = palette_for(style, definition)
@@ -170,6 +189,35 @@ def wallpaper_settings(style):
             ('primary-color', background), ('secondary-color', background)]
 
 
+def update_terminals(tx, p, style, tmp):
+    """Re-color terminals that were opted in with --apps (never opts new ones in)."""
+    import re
+    import notheme
+    colors = terminal_colors(style)
+    kitty = p['config'] / 'kitty/kitty.conf'
+    if kitty.exists() and 'notheme: no fish dependency' in kitty.read_text():
+        text = kitty.read_text()
+        values = {'background': colors['background'], 'foreground': colors['foreground'],
+                  'cursor': colors['cursor'], 'selection_background': colors['foreground'],
+                  'selection_foreground': colors['background'],
+                  **{f'color{i}': c for i, c in enumerate(colors['ansi'])}}
+        for key, value in values.items():
+            text = re.sub(rf'^{key} .*$', f'{key} {value}', text, flags=re.MULTILINE)
+        source = tmp / 'kitty.conf'
+        source.write_text(text)
+        tx.install(source, kitty)
+    try:
+        profile = notheme.settings('org.gnome.Terminal.ProfilesList').get_string('default')
+        path = f'/org/gnome/terminal/legacy/profiles:/:{profile}/'
+        current = notheme.settings('org.gnome.Terminal.Legacy.Profile', path)
+    except RuntimeError:
+        return
+    if not current.get_boolean('use-theme-colors') and current.get_string('font') == 'Space Mono 11':
+        for key, value in [('background-color', colors['background']), ('foreground-color', colors['foreground']),
+                           ('palette', colors['ansi'])]:
+            tx.set('org.gnome.Terminal.Legacy.Profile', key, value, path)
+
+
 def apply_application_style(follow_system=False):
     # Imports are delayed: build.py also imports this renderer.
     import fcntl
@@ -260,6 +308,7 @@ def apply_application_style(follow_system=False):
                 if not follow_system:
                     tx.set('org.gnome.desktop.interface', 'color-scheme',
                            'prefer-light' if style['theme-mode'] == 'light' else 'prefer-dark')
+                update_terminals(tx, p, style, Path(tmp))
                 tx.manifest['status'] = 'applied'
                 tx.save()
         except BaseException:
