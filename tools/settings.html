@@ -63,10 +63,11 @@
   #settings .hint { color: var(--ui-dim); margin: 0 0 8px; line-height: 1.5; }
   #apply.pending { background: var(--ui-accent); border-color: var(--ui-accent); color: #fff; }
   .presets { display: flex; flex-wrap: wrap; gap: 8px; }
-  .preset { padding: 4px; text-align: left; }
+  .preset { padding: 4px; text-align: left; width: 102px; font-size: 11px; overflow-wrap: anywhere; }
   .preset .mini { width: 92px; height: 52px; display: block; margin-bottom: 4px; }
-  .swatches { display: flex; gap: 6px; }
-  .swatch { width: 20px; height: 20px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+  .swatches { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .swatches[hidden] { display: none; }
+  .swatch { width: 20px; height: 20px; padding: 0; border-radius: 50%; border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(128,128,128,.55); }
   .swatch.on { border-color: #fff; }
   input[type=color] { width: 32px; height: 24px; padding: 0; border: 1px solid var(--ui-line); background: none; }
   .row small { color: var(--ui-dim); }
@@ -479,23 +480,72 @@ function color(key, label, token) {
     const wrap = el('div', 'row'); wrap.style.margin = '0'; wrap.append(auto, i);
     row(label, wrap);
 }
-function accentSwatches() {
-    const box = el('div', 'swatches');
-    for (const [name, hex] of [['Red', '#D71921'], ['Amber', '#F5A300'], ['Green', '#2BB673'], ['Blue', '#2F6BFF'], ['Violet', '#8C5CFF'], ['White', '#F2F2F2']]) {
-        const b = el('button', 'swatch'); b.title = name; b.style.background = hex; b.dataset.hex = hex;
-        b.onclick = () => { state['accent-color'] = hex; changed(); };
-        box.append(b);
+// Curated, per mode: tones from the project's own palette (muted, never neon), and deeper
+// variants on light so an accent keeps its contrast on white.
+const SWATCHES = {
+    'accent-color': {
+        dark: [['Red', '#D71921'], ['Ember', '#FF5C1A'], ['Sand', '#D9C38A'], ['Mint', '#9BB59A'], ['Sky', '#8EA3C2'], ['Lilac', '#B79BC2'], ['Bone', '#F2F2F2']],
+        light: [['Red', '#D71921'], ['Ember', '#E5500F'], ['Ochre', '#A87800'], ['Moss', '#4F7A4F'], ['Steel', '#3F5F8F'], ['Plum', '#7A4F8F'], ['Ink', '#161616']],
+    },
+};
+function swatches(key, label) {
+    const wrap = el('div', 'swatchsets'), sets = {};
+    for (const mode of ['dark', 'light']) {
+        const box = sets[mode] = el('div', 'swatches');
+        for (const [name, hex] of SWATCHES[key][mode]) {
+            const b = el('button', 'swatch'); b.title = name; b.style.background = hex; b.dataset.hex = hex;
+            b.onclick = () => { state[key] = hex; changed(); };
+            box.append(b);
+        }
+        wrap.append(box);
     }
-    bind['accent-color:swatches'] = () => { for (const b of box.children) b.classList.toggle('on', b.dataset.hex === state['accent-color'].toUpperCase()); };
-    row('Swatches', box);
+    bind[`${key}:swatches`] = () => {
+        const mode = state['theme-mode'] === 'light' ? 'light' : 'dark';
+        for (const m of ['dark', 'light']) {
+            sets[m].hidden = m !== mode;
+            for (const b of sets[m].children) b.classList.toggle('on', b.dataset.hex === state[key].toUpperCase());
+        }
+    };
+    row(label, wrap);
 }
 function mockSlider(key, max) {
     const i = Object.assign(el('input'), {type: 'range', min: 0, max, step: max / 100, value: mock[key]});
     i.oninput = () => { mock[key] = Number(i.value); tick(); };
     row(key, i);
 }
+// Theme families, each with a dark and a light variant (Catppuccin Mocha/Latte, Tokyo Night/Day,
+// Rosé Pine/Dawn, Nord Snow Storm, Dracula Alucard...). A variant sets background, outline and accent;
+// text and the widgets follow those colors. Switching Mode inside a family swaps to its other variant.
+const THEMES = [
+    ['notheme', {dark: {}, light: {}}],
+    ['Gruvbox', {dark: {'surface-color': '#282828', 'border-color': '#504945', 'accent-color': '#FE8019'}, light: {'surface-color': '#FBF1C7', 'border-color': '#D5C4A1', 'accent-color': '#AF3A03'}}],
+    ['Nord', {dark: {'surface-color': '#2E3440', 'border-color': '#434C5E', 'accent-color': '#88C0D0'}, light: {'surface-color': '#ECEFF4', 'border-color': '#D8DEE9', 'accent-color': '#5E81AC'}}],
+    ['Dracula', {dark: {'surface-color': '#282A36', 'border-color': '#44475A', 'accent-color': '#BD93F9'}, light: {'surface-color': '#FFFBEB', 'border-color': '#DEDCCF', 'accent-color': '#644AC9'}}],
+    ['Catppuccin', {dark: {'surface-color': '#1E1E2E', 'border-color': '#45475A', 'accent-color': '#CBA6F7'}, light: {'surface-color': '#EFF1F5', 'border-color': '#CCD0DA', 'accent-color': '#8839EF'}}],
+    ['Solarized', {dark: {'surface-color': '#002B36', 'border-color': '#0F4350', 'accent-color': '#2AA198'}, light: {'surface-color': '#FDF6E3', 'border-color': '#DDD6C1', 'accent-color': '#268BD2'}}],
+    ['Tokyo Night', {dark: {'surface-color': '#1A1B26', 'border-color': '#3B4261', 'accent-color': '#7AA2F7'}, light: {'surface-color': '#E1E2E7', 'border-color': '#C4C8DA', 'accent-color': '#2E7DE9'}}],
+    ['Rosé Pine', {dark: {'surface-color': '#191724', 'border-color': '#403D52', 'accent-color': '#EBBCBA'}, light: {'surface-color': '#FAF4ED', 'border-color': '#DDD3CE', 'accent-color': '#B4637A'}}],
+];
+const THEME_KEYS = ['surface-color', 'border-color', 'accent-color'];
+function themeMenu() {
+    const theme = el('select'), mode = el('select');
+    THEMES.forEach(([name], i) => theme.add(new Option(name, i)));
+    theme.add(new Option('Custom', 'custom'));
+    for (const m of ['dark', 'light']) mode.add(new Option(m === 'dark' ? 'Dark' : 'Light', m));
+    const upper = o => THEME_KEYS.map(k => String(o[k] ?? '').toUpperCase()).join();
+    const valuesFor = (i, m) => ({...Object.fromEntries(THEME_KEYS.map(k => [k, DEFAULTS[k]])), ...THEMES[i][1][m], 'theme-mode': m});
+    const family = () => THEMES.findIndex(([, variants]) => upper({...DEFAULTS, ...variants[state['theme-mode']]}) === upper(state));
+    theme.onchange = () => { if (theme.value !== 'custom') { Object.assign(state, valuesFor(Number(theme.value), state['theme-mode'])); changed(); } };
+    mode.onchange = () => {
+        const i = family();
+        if (i < 0) state['theme-mode'] = mode.value; else Object.assign(state, valuesFor(i, mode.value));
+        changed();
+    };
+    bind['theme-menu'] = () => { const i = family(); theme.value = i < 0 ? 'custom' : i; mode.value = state['theme-mode']; };
+    row('Theme', theme); row('Mode', mode);
+}
 const PRESETS = [
-    ['Ink', {'theme-mode': 'dark', 'corner-radius': 8}], ['Paper', {'theme-mode': 'light', 'corner-radius': 8}],
+    ['notheme Dark', {'theme-mode': 'dark', 'corner-radius': 8}], ['notheme Light', {'theme-mode': 'light', 'corner-radius': 8}],
     ['Grid', {'theme-mode': 'dark', 'corner-radius': 0, 'dot-shape': 'square'}],
     ['Soft', {'theme-mode': 'dark', 'corner-radius': 16, 'dot-shape': 'round'}],
     ['Mono', {'theme-mode': 'dark', 'corner-radius': 8, 'accent-color': '#F2F2F2'}],
@@ -529,15 +579,15 @@ function drawPreset(c, v) {
 
 loose();
 box.append(Object.assign(el('p', 'hint top'), {textContent: 'Apps keep their current look until you press Apply to apps at the top. Icons and the wallpaper update too.'}));
-choice('theme-mode', 'Mode', ['Dark', 'Light']);
+themeMenu();
 toggle('desktop-widgets', 'Show widgets on the desktop');
 text('greeting-name', 'Your name');
 section('Colors', '', true);
-accentSwatches();
+swatches('accent-color', 'Swatches');
 color('accent-color', 'Accent', 'accent');
 color('surface-color', 'Background', 'background');
 color('border-color', 'Outline color', 'border');
-section('Presets', 'A starting point. Picking one resets your colors; fine-tune after.');
+section('Presets', 'Shape and dot styles. Picking one resets your colors; pick colors from the Theme menu at the top.');
 presets();
 section('Desktop widgets', 'Drag widgets from the left onto the canvas; drop a card on any grid cell to pin it there.', true);
 choice('widget-anchor', 'Anchor', ['Top left', 'Top right', 'Bottom left', 'Bottom right', 'Center']);
