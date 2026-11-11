@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 100 100">
+<!-- The day as a ring of 24 hour dots, with a sun by day or a crescent by night. 100x100 units. -->
+{{{ring}}}
+<g transform="translate(50 50)">
+{{#if day}}  <circle r="6.7" fill="{{dim}}"/>
+  <g stroke="{{dim}}" stroke-width="0.7" stroke-linecap="round">
+{{#each rays}}    <line x1="{{x1}}" y1="{{y1}}" x2="{{x2}}" y2="{{y2}}"/>
+{{/each}}  </g>
+{{else}}  <path d="M0 -12.2A12.2 12.2 0 0 0 0 12.2A6.7 12.2 0 0 1 0 -12.2Z" fill="{{dim}}"/>
+{{/if}}</g>
+</svg>

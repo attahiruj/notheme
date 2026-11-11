@@ -1,0 +1,144 @@
+/* libadwaita 1.5 / GTK 4.14. Keep native layout; remove filled surfaces.
+ * No universal selector: images, thumbnails, charts and app content stay intact. */
+window.csd, window.csd:backdrop, .solid-csd {
+    background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A;
+    border-radius: 10px; box-shadow: none;
+}
+/* GTK4/libadwaita clips outside strokes at the native window boundary. Reserve
+ * a real border INSIDE its allocation; do not reuse GTK3's decoration stroke. */
+window.csd:not(.solid-csd), window.csd:not(.solid-csd):backdrop {
+    border: 1px solid #2A2A2A; border-radius: 8px; box-shadow: none;
+}
+window.csd toolbarview > .top-bar, window.csd toolbarview > .bottom-bar {
+    background: transparent;
+}
+window.csd.maximized, window.csd.maximized:backdrop {
+    border: 1px solid #2A2A2A; border-radius: 0; box-shadow: none;
+}
+window.csd.tiled, window.csd.tiled-top, window.csd.tiled-right, window.csd.tiled-bottom, window.csd.tiled-left,
+window.csd.tiled:backdrop, window.csd.tiled-top:backdrop, window.csd.tiled-right:backdrop,
+window.csd.tiled-bottom:backdrop, window.csd.tiled-left:backdrop,
+window.solid-csd { border-radius: 0; }
+window.csd.fullscreen, window.csd.fullscreen:backdrop {
+    border: none; border-radius: 0; box-shadow: none;
+}
+toolbarview, toolbarview > .top-bar, toolbarview > .bottom-bar,
+navigationview, navigationpage, .sidebar-pane, .content-pane,
+.sidebar, .sidebar:backdrop, .content, .content:backdrop {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+}
+headerbar, headerbar:backdrop, .toolbar, .toolbar:backdrop,
+.titlebar, .titlebar:backdrop { background: #000000; box-shadow: none; }
+.sidebar-pane { border-right: 1px solid #2A2A2A; }
+.boxed-list > row, .boxed-list > row:backdrop, .card, .card:backdrop {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+}
+.boxed-list > row:hover { background: #000000; border-color: #8C8C8C; }
+.boxed-list > row:selected { background: #000000; border-color: #D71921; }
+popover > contents, popover.background > contents, .menu, .menu > contents,
+.osd, toast, .dialog, .message-dialog, .message-dialog .response-area {
+    background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A; box-shadow: none;
+}
+popover arrow { background: #000000; border-color: #2A2A2A; box-shadow: none; }
+popover modelbutton:hover, popover modelbutton:active,
+popover modelbutton:selected { background: #000000; color: #D71921; }
+button.flat, button.circular, windowcontrols button {
+    background: #000000; background-image: none; color: #F2F2F2;
+    border: 1px solid transparent; box-shadow: none;
+}
+button.flat:hover, button.circular:hover, windowcontrols button:hover { background: #000000; border-color: #8C8C8C; }
+button.flat:checked, button.circular:checked, windowcontrols button.close:hover {
+    background: #000000; color: #D71921; border-color: #D71921;
+}
+entry:focus-within, searchentry:focus-within, spinbutton:focus-within {
+    outline: 1px solid #D71921; outline-offset: -1px; box-shadow: none;
+}
+/* Nautilus 46's actual CSS IDs/classes; its own path bar and row fills otherwise
+ * survive changes to libadwaita's named colors. */
+#NautilusPathBar, #NautilusQueryEditorTag {
+    background: #000000; border: 1px solid #2A2A2A; border-radius: 6px; box-shadow: none;
+}
+#NautilusPathButton, #NautilusPathButton.current-dir { background: #000000; box-shadow: none; }
+#NautilusPathButton.current-dir label { color: #F2F2F2; }
+#NautilusPathButton:hover { border-color: #D71921; }
+.nautilus-list-view, .nautilus-grid-view,
+.nautilus-list-view columnview, .nautilus-list-view columnview > listview,
+.nautilus-grid-view gridview { background: #000000; color: #F2F2F2; }
+.nautilus-list-view columnview > listview > row,
+.nautilus-list-view columnview > listview > row:nth-child(even),
+.nautilus-list-view columnview > listview > row:nth-child(odd),
+.nautilus-grid-view gridview > child {
+    background: #000000; border: 1px solid transparent; border-radius: 4px; box-shadow: none;
+}
+.nautilus-list-view columnview > listview > row:hover,
+.nautilus-grid-view gridview > child:hover { background: #000000; border-color: #2A2A2A; }
+.nautilus-list-view columnview > listview > row:selected,
+.nautilus-grid-view gridview > child:selected { background: #000000; border-color: #D71921; }
+.nautilus-list-view columnview > listview > row > cell { background: transparent; }
+.nautilus-list-view #NautilusViewCell, .nautilus-grid-view #NautilusViewCell { background: transparent; }
+.nautilus-list-view columnview > header { background: #000000; border-bottom: 1px solid #2A2A2A; }
+.floating-bar, .floating-bar:backdrop { background: #000000; border: 1px solid #2A2A2A; box-shadow: none; }
+.view picture { filter: none; }
+.view .thumbnail { box-shadow: none; }
+button.star.starred { color: #D71921; }
+
+/* GNOME Clocks 46: the application explicitly colors world-time tiles and
+ * uses light proportional time labels, independently of the desktop clock. */
+.clock-time, .none .clock-time, .night .clock-time, .naut .clock-time,
+.astro .clock-time, .civil .clock-time, .day .clock-time {
+    background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A;
+    border-radius: 6px; font-family: "Doto"; font-weight: 700;
+}
+.alarm-time, .clocks-standalone-label, .clocks-standalone-label-small,
+.clocks-ringing-label, .clocks-timer-label, .timer-countdown,
+.clocks-alarm-setup-time, .clocks-spinbutton,
+.stopped-stopwatch label, .running-stopwatch label, .paused-stopwatch label {
+    font-family: "Doto"; font-weight: 700; color: #F2F2F2;
+}
+.lap-time, .clocks-secondary-standalone-label { font-family: "Space Mono"; }
+.running-stopwatch .seconds-label { color: #D71921; }
+calendar { background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A; }
+calendar label { font-family: "Space Mono"; }
+calendar .today { color: #D71921; }
+calendar:selected { background: #000000; color: #D71921; }
+.calendar-view, .month-view, .week-header, .month-header {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+}
+
+/* Structural outlines, not boxes around every toolbar glyph and breadcrumb.
+ * Keep transparent border space to avoid layout shifts on keyboard focus. */
+headerbar button, headerbar button.flat, headerbar button.circular,
+.toolbar button, .toolbar button.flat,
+#NautilusPathBar button, #NautilusPathButton,
+#NautilusPathButton.current-dir, #NautilusPathButton:hover,
+windowcontrols button, windowcontrols button:hover {
+    background: #000000; border: 1px solid transparent; box-shadow: none;
+}
+headerbar button:hover, .toolbar button:hover { color: #D71921; border-color: transparent; }
+headerbar button:checked, .toolbar button:checked { color: #D71921; border-color: transparent; }
+windowcontrols button image { background: transparent; box-shadow: none; }
+.nautilus-list-view columnview > header button,
+.nautilus-list-view columnview > header button:hover {
+    background: #000000; border: none; border-radius: 0; box-shadow: none;
+}
+headerbar button:focus-visible, .toolbar button:focus-visible,
+#NautilusPathBar button:focus-visible,
+.nautilus-list-view columnview > header button:focus-visible {
+    outline: 1px solid #D71921; outline-offset: -1px; box-shadow: none;
+}
+/* One slim selection marker, rather than a red rectangle around each file row. */
+.nautilus-list-view columnview > listview > row:selected {
+    border-color: transparent; border-left-color: #D71921; border-radius: 0;
+}
+
+/* Window controls are glyphs, not outlined action buttons. Include their
+ * states and inner image: libadwaita can paint either node independently. */
+windowcontrols button, windowcontrols button:hover,
+windowcontrols button:active, windowcontrols button:checked,
+windowcontrols button:backdrop, windowcontrols button:disabled,
+windowcontrols button.close:hover, windowcontrols button.close:active,
+windowcontrols button image, windowcontrols button:hover image,
+windowcontrols button:active image, windowcontrols button:backdrop image {
+    background: transparent; border: none; box-shadow: none;
+}
+windowcontrols button:focus-visible { outline: 1px solid #D71921; outline-offset: -1px; }

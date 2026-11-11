@@ -1,0 +1,15 @@
+/* Staged GDM appearance only. Not installed by the user-level installer.
+ * No authentication logic, PAM changes or service restart commands. */
+stage, .login-dialog { background-color: #000000; color: #F2F2F2; }
+#panel { background-color: #000000; color: #F2F2F2; border-bottom: 1px solid #2A2A2A; }
+#panel .clock { font-family: "Doto", monospace; font-weight: 700; }
+.login-dialog .user-widget-label { font-family: "Space Grotesk", sans-serif; color: #F2F2F2; }
+.login-dialog .login-dialog-prompt-entry,
+.login-dialog .login-dialog-button,
+.login-dialog .login-dialog-session-list-button {
+    background-color: #000000; color: #F2F2F2; border: 1px solid #2A2A2A;
+    border-radius: 8px; box-shadow: none;
+}
+.login-dialog .login-dialog-prompt-entry:focus,
+.login-dialog .login-dialog-button:focus { border-color: #D71921; box-shadow: none; }
+.login-dialog .login-dialog-message-warning { color: #D71921; }

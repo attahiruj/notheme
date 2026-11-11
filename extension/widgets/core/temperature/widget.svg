@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 55 100">
+<!-- Thermometer. 55x100 units. The liquid rises with the reading; ticks above it light up. -->
+<path d="{{outline}}" fill="none" stroke="{{dim}}" stroke-width="0.8"/>
+<circle cx="{{bulbX}}" cy="{{bulbY}}" r="{{bulbR}}" fill="{{fill}}"/>
+{{#if known}}<rect x="{{liquidX}}" y="{{liquidY}}" width="{{liquidW}}" height="{{liquidH}}" fill="{{fill}}"/>{{/if}}
+{{#each ticks}}<line x1="{{x1}}" y1="{{y}}" x2="{{x2}}" y2="{{y}}" stroke="{{color}}" stroke-width="0.8"/>
+{{#if label}}<text x="{{labelX}}" y="{{y}}" dy=".35em" fill="{{dim}}" font-family="{{mono}}" font-weight="700" font-size="{{tickSize}}" text-anchor="middle">{{label}}</text>{{/if}}
+{{/each}}<text x="{{centerX}}" y="{{centerY}}" dy=".35em" fill="{{alarm}}" font-family="{{font}}" font-weight="700" font-size="{{centerSize}}" text-anchor="middle">{{center}}</text>
+</svg>

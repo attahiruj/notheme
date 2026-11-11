@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 100 100">
+<!-- QFP microcontroller package: leads, body, pin-1 dot. The body interior starts at (16.4, 27.6), 67.2 x 56. -->
+<g fill="{{line}}">
+  <rect x="15.81" y="4.50" width="1.18" height="5.50"/>
+  <rect x="24.21" y="4.50" width="1.18" height="5.50"/>
+  <rect x="32.61" y="4.50" width="1.18" height="5.50"/>
+  <rect x="41.01" y="4.50" width="1.18" height="5.50"/>
+  <rect x="49.41" y="4.50" width="1.18" height="5.50"/>
+  <rect x="57.81" y="4.50" width="1.18" height="5.50"/>
+  <rect x="66.21" y="4.50" width="1.18" height="5.50"/>
+  <rect x="74.61" y="4.50" width="1.18" height="5.50"/>
+  <rect x="83.01" y="4.50" width="1.18" height="5.50"/>
+  <rect x="90.00" y="15.81" width="5.50" height="1.18"/>
+  <rect x="90.00" y="24.21" width="5.50" height="1.18"/>
+  <rect x="90.00" y="32.61" width="5.50" height="1.18"/>
+  <rect x="90.00" y="41.01" width="5.50" height="1.18"/>
+  <rect x="90.00" y="49.41" width="5.50" height="1.18"/>
+  <rect x="90.00" y="57.81" width="5.50" height="1.18"/>
+  <rect x="90.00" y="66.21" width="5.50" height="1.18"/>
+  <rect x="90.00" y="74.61" width="5.50" height="1.18"/>
+  <rect x="90.00" y="83.01" width="5.50" height="1.18"/>
+  <rect x="83.01" y="90.00" width="1.18" height="5.50"/>
+  <rect x="74.61" y="90.00" width="1.18" height="5.50"/>
+  <rect x="66.21" y="90.00" width="1.18" height="5.50"/>
+  <rect x="57.81" y="90.00" width="1.18" height="5.50"/>
+  <rect x="49.41" y="90.00" width="1.18" height="5.50"/>
+  <rect x="41.01" y="90.00" width="1.18" height="5.50"/>
+  <rect x="32.61" y="90.00" width="1.18" height="5.50"/>
+  <rect x="24.21" y="90.00" width="1.18" height="5.50"/>
+  <rect x="15.81" y="90.00" width="1.18" height="5.50"/>
+  <rect x="4.50" y="83.01" width="5.50" height="1.18"/>
+  <rect x="4.50" y="74.61" width="5.50" height="1.18"/>
+  <rect x="4.50" y="66.21" width="5.50" height="1.18"/>
+  <rect x="4.50" y="57.81" width="5.50" height="1.18"/>
+  <rect x="4.50" y="49.41" width="5.50" height="1.18"/>
+  <rect x="4.50" y="41.01" width="5.50" height="1.18"/>
+  <rect x="4.50" y="32.61" width="5.50" height="1.18"/>
+  <rect x="4.50" y="24.21" width="5.50" height="1.18"/>
+  <rect x="4.50" y="15.81" width="5.50" height="1.18"/>
+</g>
+<rect x="10" y="10" width="80" height="80" rx="2" fill="none" stroke="{{dim}}" stroke-width="0.7"/>
+<rect x="13.2" y="13.2" width="73.6" height="73.6" rx="1.2" fill="none" stroke="{{line}}" stroke-width="0.7"/>
+{{#if square}}<rect x="16.4" y="16.4" width="4.8" height="4.8" fill="{{accent}}"/>{{else}}<circle cx="18.8" cy="18.8" r="2.4" fill="{{accent}}"/>{{/if}}
+<g transform="translate(16.4 27.6)">
+{{#each tiles}}  <rect x="{{x}}" y="{{y}}" width="{{w}}" height="{{h}}" rx="1.3" fill="none" stroke="{{line}}" stroke-width="0.7"/>
+  {{{dots}}}
+{{/each}}</g>
+</svg>

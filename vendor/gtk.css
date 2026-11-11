@@ -1,0 +1,255 @@
+/* notheme: pure black, one-pixel structure, small Nothing-red indicators.
+ * Shared GTK3/GTK4 rules; GTK4 application-specific rules are in gtk4.css. */
+@define-color accent_color #D71921;
+@define-color accent_bg_color #D71921;
+@define-color accent_fg_color #F2F2F2;
+@define-color destructive_color #D71921;
+@define-color destructive_bg_color #D71921;
+@define-color destructive_fg_color #F2F2F2;
+@define-color window_bg_color #000000;
+@define-color window_fg_color #F2F2F2;
+@define-color view_bg_color #000000;
+@define-color view_fg_color #F2F2F2;
+@define-color headerbar_bg_color #000000;
+@define-color headerbar_fg_color #F2F2F2;
+@define-color headerbar_border_color #2A2A2A;
+@define-color headerbar_backdrop_color #000000;
+@define-color headerbar_shade_color transparent;
+@define-color popover_bg_color #000000;
+@define-color popover_fg_color #F2F2F2;
+@define-color dialog_bg_color #000000;
+@define-color dialog_fg_color #F2F2F2;
+@define-color card_bg_color #000000;
+@define-color card_fg_color #F2F2F2;
+@define-color sidebar_bg_color #000000;
+@define-color sidebar_fg_color #F2F2F2;
+@define-color sidebar_border_color #2A2A2A;
+@define-color sidebar_backdrop_color #000000;
+@define-color secondary_sidebar_bg_color #000000;
+@define-color secondary_sidebar_fg_color #F2F2F2;
+@define-color secondary_sidebar_border_color #2A2A2A;
+@define-color secondary_sidebar_backdrop_color #000000;
+@define-color borders #2A2A2A;
+@define-color unfocused_borders #2A2A2A;
+@define-color shade_color transparent;
+@define-color scrollbar_outline_color transparent;
+@define-color theme_bg_color #000000;
+@define-color theme_fg_color #F2F2F2;
+@define-color theme_base_color #000000;
+@define-color theme_text_color #F2F2F2;
+@define-color theme_selected_bg_color #000000;
+@define-color theme_selected_fg_color #D71921;
+@define-color theme_unfocused_bg_color #000000;
+@define-color theme_unfocused_base_color #000000;
+@define-color theme_unfocused_fg_color #8C8C8C;
+@define-color insensitive_fg_color #8C8C8C;
+
+window, dialog, popover, menu { font-family: "Space Grotesk"; }
+decoration { border-radius: 8px 8px 0 0; border: none; box-shadow: none; }
+window.background, window.background:backdrop, dialog, .background, .background:backdrop,
+.view, .view:backdrop, textview text,
+treeview.view, iconview.view, viewport, scrolledwindow {
+    background-color: #000000; color: #F2F2F2;
+}
+headerbar, headerbar:backdrop, .titlebar, .titlebar:backdrop {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+    border-bottom: 1px solid #2A2A2A;
+}
+button, button:backdrop, entry, entry:backdrop, searchentry, spinbutton, combobox > box > button {
+    background-color: #000000; background-image: none; color: #F2F2F2;
+    border: 1px solid #2A2A2A; border-radius: 6px; box-shadow: none;
+}
+button:hover, button:backdrop:hover { background: #000000; border-color: #8C8C8C; }
+button:checked, button:active, button.suggested-action, button.destructive-action,
+button.suggested-action:hover, button.suggested-action:active,
+button.destructive-action:hover, button.destructive-action:active {
+    background: #000000; border-color: #D71921; color: #F2F2F2; box-shadow: none;
+}
+button.destructive-action { color: #D71921; }
+button:disabled, entry:disabled { color: #8C8C8C; border-color: #2A2A2A; }
+button:focus, entry:focus, searchentry:focus, spinbutton:focus {
+    outline: 1px solid #D71921; outline-offset: -1px; box-shadow: none;
+}
+entry { padding-left: 10px; padding-right: 10px; }
+headerbar button, headerbar button.flat, headerbar button.titlebutton,
+.toolbar button {
+    background: #000000; border: 1px solid transparent; box-shadow: none;
+}
+headerbar button.flat:hover, headerbar button.titlebutton:hover {
+    background: #000000; border-color: transparent; color: #D71921;
+}
+headerbar button.titlebutton.close:hover { color: #D71921; border-color: #D71921; }
+.linked:not(.vertical) > button:not(:first-child),
+.linked:not(.vertical) > entry:not(:first-child) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.linked:not(.vertical) > button:not(:last-child),
+.linked:not(.vertical) > entry:not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+popover.background, popover > contents, menu, tooltip, tooltip.background {
+    background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A;
+    border-radius: 8px; box-shadow: none;
+}
+popover modelbutton, menu menuitem { background: #000000; border-radius: 4px; }
+popover modelbutton:hover, menu menuitem:hover { background: #000000; color: #D71921; }
+separator { background: #2A2A2A; min-width: 1px; min-height: 1px; }
+list, listview, gridview, columnview, .navigation-sidebar, placessidebar {
+    background: #000000; color: #F2F2F2;
+}
+row, list row, listview row, gridview child {
+    background: #000000; color: #F2F2F2; border: 1px solid transparent; box-shadow: none;
+}
+row:hover, list row:hover, listview row:hover, gridview child:hover { background: #000000; border-color: #2A2A2A; }
+row:selected, list row:selected, listview row:selected, gridview child:selected,
+.navigation-sidebar row:selected, placessidebar row:selected {
+    background: #000000; color: #F2F2F2; border-color: #D71921; box-shadow: none;
+}
+.view:selected, treeview.view:selected { background: #000000; color: #D71921; }
+textview text selection, entry selection { background-color: #D71921; color: #F2F2F2; }
+.frame, frame > border, .card, .card:backdrop, .boxed-list {
+    background: #000000; border: 1px solid #2A2A2A; box-shadow: none;
+}
+notebook > header { background: #000000; border-color: #2A2A2A; box-shadow: none; }
+notebook > header tab { background: #000000; color: #8C8C8C; border-bottom: 1px solid transparent; box-shadow: none; }
+notebook > header tab:checked { background: #000000; color: #F2F2F2; border-bottom-color: #D71921; }
+switch { background: #000000; border: 1px solid #2A2A2A; box-shadow: none; }
+switch:checked { background: #000000; border-color: #D71921; }
+switch slider { background: #8C8C8C; border: none; box-shadow: none; }
+switch:checked slider { background: #D71921; }
+check, radio { background: #000000; border: 1px solid #8C8C8C; box-shadow: none; }
+check:checked, radio:checked { background: #D71921; border-color: #D71921; color: #F2F2F2; }
+scale trough, progressbar trough { background: #000000; border: 1px solid #2A2A2A; box-shadow: none; }
+scale highlight, progressbar progress { background: #D71921; border-color: #D71921; box-shadow: none; }
+scale slider { background: #F2F2F2; border: 1px solid #D71921; box-shadow: none; }
+rubberband { background: alpha(#D71921, 0.1); border: 1px solid #D71921; }
+
+/* GTK3 Terminal chrome. GNOME Terminal names its window node terminal-window,
+ * so window.* selectors never match it. */
+terminal-window headerbar, terminal-window headerbar:backdrop,
+terminal-window .titlebar, terminal-window .titlebar:backdrop {
+    background: #000000; color: #F2F2F2; border-bottom: 1px solid #2A2A2A; box-shadow: none;
+}
+terminal-window headerbar button, terminal-window headerbar button:backdrop {
+    background: #000000; color: #F2F2F2; border: 1px solid transparent; box-shadow: none;
+}
+terminal-window headerbar button:hover { border-color: #8C8C8C; }
+terminal-window headerbar button:checked,
+terminal-window headerbar button.titlebutton.close:hover { color: #D71921; border-color: #D71921; }
+terminal-window notebook > header tab:checked { background: #000000; border-bottom-color: #D71921; }
+.thunar .standard-view, .thunar .sidebar, .thunar .sidebar .view { background: #000000; }
+.thunar .sidebar .view:selected { background: #000000; color: #D71921; }
+
+headerbar button.titlebutton, headerbar button.titlebutton:hover,
+headerbar button.titlebutton:active, headerbar button.titlebutton:backdrop,
+headerbar button.titlebutton.close:hover,
+.titlebar button.titlebutton, .titlebar button.titlebutton:hover,
+.titlebar button.titlebutton:active, .titlebar button.titlebutton:backdrop {
+    background: transparent; border: none; box-shadow: none;
+}
+
+/* Traditional GTK dialogs use .titlebar:not(headerbar), which is more specific
+ * than a plain .titlebar rule and otherwise retains Yaru's gray header. */
+.titlebar:not(headerbar), .titlebar:not(headerbar):backdrop,
+messagedialog .titlebar, messagedialog .titlebar:backdrop {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+    border-bottom: 1px solid #2A2A2A;
+}
+messagedialog, messagedialog .dialog-vbox, .dialog-action-area {
+    background: #000000; color: #F2F2F2; box-shadow: none;
+}
+messagedialog .dialog-action-area button,
+messagedialog .dialog-action-area button:backdrop,
+messagedialog .linked > button {
+    background: #000000; color: #F2F2F2; border: 1px solid #2A2A2A;
+    border-radius: 6px; min-height: 32px; padding: 6px 12px; box-shadow: none;
+}
+messagedialog .linked > button:focus { outline: 1px solid #D71921; outline-offset: -1px; }
+
+/* Reserve an inside stroke too: some GTK3 apps/compositors clip decoration
+ * shadows at the content boundary. A real border survives that clipping.
+ * GNOME Terminal's window node is terminal-window, so every window.* frame
+ * selector below has a terminal-window.* twin. */
+window.csd, window.csd:backdrop,
+terminal-window.csd, terminal-window.csd:backdrop {
+    border: 1px solid #2A2A2A;
+    border-radius: 8px 8px 0 0;
+}
+window.csd.maximized, window.csd.maximized:backdrop,
+window.csd.tiled, window.csd.tiled:backdrop,
+window.csd.tiled-top, window.csd.tiled-top:backdrop,
+window.csd.tiled-right, window.csd.tiled-right:backdrop,
+window.csd.tiled-bottom, window.csd.tiled-bottom:backdrop,
+window.csd.tiled-left, window.csd.tiled-left:backdrop,
+terminal-window.csd.maximized, terminal-window.csd.maximized:backdrop,
+terminal-window.csd.tiled, terminal-window.csd.tiled:backdrop,
+terminal-window.csd.tiled-top, terminal-window.csd.tiled-top:backdrop,
+terminal-window.csd.tiled-right, terminal-window.csd.tiled-right:backdrop,
+terminal-window.csd.tiled-bottom, terminal-window.csd.tiled-bottom:backdrop,
+terminal-window.csd.tiled-left, terminal-window.csd.tiled-left:backdrop {
+    border-radius: 0;
+}
+window.csd.fullscreen, window.csd.fullscreen:backdrop,
+terminal-window.csd.fullscreen, terminal-window.csd.fullscreen:backdrop {
+    border: none; border-radius: 0;
+}
+
+/* GTK3 CSD: paint one zero-blur outline OUTSIDE the content rectangle, as
+ * GTK's decoration node expects. A regular decoration border can be covered
+ * by the opaque titlebar at the corner. This is a flat stroke, not a shadow.
+ * Keep Yaru's resize margins/handles; do not force overflow or remove them. */
+window.csd decoration, window.csd decoration:backdrop,
+terminal-window.csd decoration, terminal-window.csd decoration:backdrop,
+messagedialog.csd decoration, messagedialog.csd decoration:backdrop {
+    border: none; border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 0 1px #2A2A2A;
+}
+window.csd > headerbar, window.csd > headerbar:backdrop,
+window.csd > .titlebar, window.csd > .titlebar:backdrop,
+window.csd > .titlebar:not(headerbar), window.csd > .titlebar:not(headerbar):backdrop,
+terminal-window.csd > headerbar, terminal-window.csd > headerbar:backdrop,
+terminal-window.csd > .titlebar, terminal-window.csd > .titlebar:backdrop {
+    border-top-left-radius: 8px; border-top-right-radius: 8px;
+    border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+    background-clip: padding-box;
+}
+.csd.popup decoration, .csd.popup decoration:backdrop {
+    border: none; border-radius: 8px; box-shadow: 0 0 0 1px #2A2A2A;
+}
+window.tiled decoration, window.tiled-top decoration, window.tiled-right decoration,
+window.tiled-bottom decoration, window.tiled-left decoration,
+window.tiled decoration:backdrop, window.tiled-top decoration:backdrop,
+window.tiled-right decoration:backdrop, window.tiled-bottom decoration:backdrop,
+window.tiled-left decoration:backdrop,
+terminal-window.tiled decoration, terminal-window.tiled-top decoration,
+terminal-window.tiled-right decoration, terminal-window.tiled-bottom decoration,
+terminal-window.tiled-left decoration,
+terminal-window.tiled decoration:backdrop, terminal-window.tiled-top decoration:backdrop,
+terminal-window.tiled-right decoration:backdrop, terminal-window.tiled-bottom decoration:backdrop,
+terminal-window.tiled-left decoration:backdrop { border-radius: 0; box-shadow: 0 0 0 1px #2A2A2A; }
+window.maximized decoration, window.maximized decoration:backdrop,
+window.fullscreen decoration, window.fullscreen decoration:backdrop,
+terminal-window.maximized decoration, terminal-window.maximized decoration:backdrop,
+terminal-window.fullscreen decoration, terminal-window.fullscreen decoration:backdrop {
+    border: none; border-radius: 0; box-shadow: none;
+}
+window.csd.maximized > .titlebar, window.csd.fullscreen > .titlebar,
+window.csd.tiled > .titlebar, window.csd.tiled-top > .titlebar, window.csd.tiled-right > .titlebar,
+window.csd.tiled-bottom > .titlebar, window.csd.tiled-left > .titlebar,
+window.csd.maximized > .titlebar:backdrop, window.csd.fullscreen > .titlebar:backdrop,
+window.csd.tiled > .titlebar:backdrop, window.csd.tiled-top > .titlebar:backdrop,
+window.csd.tiled-right > .titlebar:backdrop, window.csd.tiled-bottom > .titlebar:backdrop,
+window.csd.tiled-left > .titlebar:backdrop,
+window.csd.maximized > headerbar, window.csd.fullscreen > headerbar,
+window.csd.tiled > headerbar, window.csd.tiled-top > headerbar, window.csd.tiled-right > headerbar,
+window.csd.tiled-bottom > headerbar, window.csd.tiled-left > headerbar,
+terminal-window.csd.maximized > .titlebar, terminal-window.csd.fullscreen > .titlebar,
+terminal-window.csd.tiled > .titlebar, terminal-window.csd.tiled-top > .titlebar,
+terminal-window.csd.tiled-right > .titlebar, terminal-window.csd.tiled-bottom > .titlebar,
+terminal-window.csd.tiled-left > .titlebar,
+terminal-window.csd.maximized > headerbar, terminal-window.csd.fullscreen > headerbar,
+terminal-window.csd.tiled > headerbar, terminal-window.csd.tiled-top > headerbar,
+terminal-window.csd.tiled-right > headerbar, terminal-window.csd.tiled-bottom > headerbar,
+terminal-window.csd.tiled-left > headerbar {
+    border-top-left-radius: 0; border-top-right-radius: 0;
+}
+window.solid-csd decoration, window.solid-csd decoration:backdrop,
+terminal-window.solid-csd decoration, terminal-window.solid-csd decoration:backdrop {
+    background: #000000; border: 1px solid #2A2A2A; border-radius: 0; box-shadow: none;
+}

@@ -1,0 +1,49 @@
+<schemalist>
+  <schema id="org.gnome.shell.extensions.notheme" path="/org/gnome/shell/extensions/notheme/">
+    <key name="desktop-widgets" type="b"><default>true</default><summary>Show desktop clock and system cards</summary></key>
+    <key name="shell-style" type="b"><default>true</default><summary>Style the panel, menus, overview and dock</summary></key>
+    <key name="show-date" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show the desktop date</summary></key>
+    <key name="show-greeting" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show the desktop greeting</summary></key>
+    <key name="show-stats" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show CPU and memory cards on large displays</summary></key>
+    <key name="clock-format" type="s"><choices><choice value="24h"/><choice value="12h"/></choices><default>'24h'</default><summary>Desktop clock format</summary></key>
+    <key name="clock-seconds" type="b"><default>false</default><summary>Show seconds on the desktop clock</summary></key>
+    <key name="accent-color" type="s"><default>'#D71921'</default><summary>Accent color as six-digit hex</summary></key>
+    <key name="theme-mode" type="s"><choices><choice value="dark"/><choice value="light"/></choices><default>'dark'</default><summary>Dark or light theme</summary></key>
+    <key name="surface-color" type="s"><default>''</default><summary>Custom surface hex color; empty follows the selected mode</summary></key>
+    <key name="border-color" type="s"><default>''</default><summary>Custom outline hex color; empty follows the selected mode</summary></key>
+    <key name="app-font-size" type="i"><range min="9" max="18"/><default>11</default><summary>GTK application text size in points</summary></key>
+    <key name="corner-radius" type="i"><range min="0" max="32"/><default>8</default><summary>Panel and popup corner radius in pixels</summary></key>
+    <key name="shell-font-size" type="i"><range min="10" max="18"/><default>12</default><summary>Shell text size in points</summary></key>
+    <key name="panel-height" type="i"><range min="28" max="56"/><default>36</default><summary>Top panel height in pixels</summary></key>
+    <key name="panel-clock-size" type="i"><range min="14" max="40"/><default>24</default><summary>Panel clock size in pixels</summary></key>
+    <key name="panel-icon-size" type="i"><range min="12" max="32"/><default>16</default><summary>Top bar status icon size in pixels</summary></key>
+    <key name="desktop-clock-size" type="i"><range min="72" max="240"/><default>144</default><summary>Desktop clock size before display scaling</summary></key>
+    <key name="clock-font" type="s"><choices><choice value="Doto"/><choice value="Space Mono"/><choice value="Space Grotesk"/></choices><default>'Doto'</default><summary>Clock font family</summary></key>
+    <key name="selection-style" type="s"><choices><choice value="outline"/><choice value="filled"/></choices><default>'outline'</default><summary>Outline-only or filled selection states</summary></key>
+    <key name="widget-x" type="d"><range min="0.0" max="0.8"/><default>0.02</default><summary>Horizontal distance from the anchored screen edge, as a monitor fraction</summary></key>
+    <key name="widget-y" type="d"><range min="0.0" max="0.7"/><default>0.03</default><summary>Vertical distance from the anchored screen edge, as a monitor fraction</summary></key>
+    <key name="lock-style" type="b"><default>false</default><summary>Opt-in styling of the session lock screen</summary></key>
+    <key name="lock-clock-size" type="i"><range min="48" max="160"/><default>96</default><summary>Lock screen time size in pixels</summary></key>
+    <key name="ui-font" type="s"><choices><choice value="Space Grotesk"/><choice value="Space Mono"/><choice value="Sans"/></choices><default>'Space Grotesk'</default><summary>Menu and application font family</summary></key>
+    <key name="outline-width" type="i"><range min="0" max="3"/><default>1</default><summary>Structural outline thickness in pixels</summary></key>
+    <key name="popup-padding" type="i"><range min="6" max="30"/><default>12</default><summary>Shell popup padding in pixels</summary></key>
+    <key name="panel-padding" type="i"><range min="4" max="24"/><default>12</default><summary>Panel item horizontal padding in pixels</summary></key>
+    <key name="widget-gap" type="i"><range min="8" max="48"/><default>20</default><summary>Space between desktop widgets in pixels</summary></key>
+    <key name="card-padding" type="i"><range min="0" max="15"/><default>8</default><summary>Desktop system card padding in pixels</summary><description>At most 10% of a card, so drawings keep the room.</description></key>
+    <key name="show-clock" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show desktop clock</summary></key>
+    <key name="show-cpu" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show CPU card</summary></key>
+    <key name="show-memory" type="b"><default>true</default><summary>Legacy, migrated to widgets: Show memory card</summary></key>
+    <key name="scrollbar-width" type="i"><range min="2" max="10"/><default>4</default><summary>Scrollbar thickness in pixels</summary></key>
+    <key name="scrollbar-opacity" type="d"><range min="0.35" max="1.0"/><default>0.6</default><summary>Inactive scrollbar thumb opacity</summary></key>
+    <key name="scrollbar-style" type="s"><choices><choice value="accent"/><choice value="monochrome"/></choices><default>'accent'</default><summary>Accent or monochrome scrollbar thumb</summary></key>
+    <key name="widgets" type="as"><default>['clock', 'today', 'cpu', 'memory']</default><summary>Desktop widgets, top to bottom</summary><description>Ids from the widget browser. Text widgets stack; cards flow into rows.</description></key>
+    <key name="widget-titles" type="b"><default>false</default><summary>Show a title on every desktop card</summary><description>Cards whose drawing already says what they show omit the title unless this is on.</description></key>
+    <key name="widget-cells" type="as"><default>['today@0,1', 'cpu@0,2', 'memory@1,2']</default><summary>Chosen grid cell of desktop cards</summary><description>Entries like "cpu@2,0": card id, then 0-based column and row. Cards without an entry are placed automatically.</description></key>
+    <key name="widget-anchor" type="s"><choices><choice value="top-left"/><choice value="top-right"/><choice value="bottom-left"/><choice value="bottom-right"/><choice value="center"/></choices><default>'top-left'</default><summary>Screen corner the desktop widgets are anchored to</summary></key>
+    <key name="widget-opacity" type="d"><range min="0.3" max="1.0"/><default>1.0</default><summary>Desktop widget opacity</summary></key>
+    <key name="card-style" type="s"><choices><choice value="outlined"/><choice value="borderless"/></choices><default>'outlined'</default><summary>Desktop card frame style</summary></key>
+    <key name="dot-shape" type="s"><choices><choice value="round"/><choice value="square"/></choices><default>'round'</default><summary>Shape of widget meter dots</summary></key>
+    <key name="monitor-size" type="s"><default>''</default><summary>Primary monitor size as WIDTHxHEIGHT, written by the extension so the settings preview matches this display</summary></key>
+    <key name="greeting-name" type="s"><default>''</default><summary>Name used by the greeting widget; empty omits it</summary></key>
+  </schema>
+</schemalist>

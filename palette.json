@@ -1,0 +1,13 @@
+{
+  "modes": {
+    "dark": {
+      "background": "#000000", "foreground": "#F2F2F2",
+      "border": "#2A2A2A", "secondary": "#8C8C8C", "muted": "#4A4A4A", "accent": "#D71921"
+    },
+    "light": {
+      "background": "#FFFFFF", "foreground": "#161616",
+      "border": "#D0D0D0", "secondary": "#5A5A5A", "muted": "#9A9A9A", "accent": "#D71921"
+    }
+  },
+  "ansi": ["#0E0E0E", "#D71921", "#9BB59A", "#D9C38A", "#8EA3C2", "#B79BC2", "#8FB8B8", "#C9C9C9", "#4A4A4A", "#F0434B", "#B5CCB4", "#E8D6A8", "#AABBD4", "#CDB6D6", "#ABCDCD", "#F2F2F2"]
+}

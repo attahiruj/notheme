@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 100 100">
+<!-- 3.5" floppy disk. 100x100 units. The label holds the figure and a row of cells that fill with use. -->
+<g transform="translate(2.5 2.5) scale(0.95)">
+<g fill="none" stroke="{{dim}}" stroke-width="0.7">
+  <path d="M6 .5H85L99.5 15V93.5A6 6 0 0 1 93.5 99.5H6.5A6 6 0 0 1 .5 93.5V6.5A6 6 0 0 1 6.5 .5Z"/>
+  <rect x="25" y=".5" width="50" height="32" rx="2" fill="{{dim}}" fill-opacity="0.18"/>
+  <rect x="7.5" y="89" width="5" height="5"/>
+</g>
+<rect x="59" y="6" width="10" height="20" rx="1" fill="none" stroke="{{fg}}" stroke-width="0.7"/>
+{{#if square}}<rect x="7.5" y="7.5" width="5" height="5" fill="{{accent}}"/>{{else}}<circle cx="10" cy="10" r="2.5" fill="{{accent}}"/>{{/if}}
+<rect x="12" y="44" width="76" height="40" rx="2" fill="none" stroke="{{line}}" stroke-width="0.7"/>
+<text x="50" y="58" dy=".35em" fill="{{fg}}" font-family="{{font}}" font-weight="700" font-size="{{labelSize}}" text-anchor="middle">{{label}}</text>
+{{#each cells}}<rect x="{{x}}" y="72" width="{{cw}}" height="8" fill="{{color}}"/>
+{{/each}}</g></svg>

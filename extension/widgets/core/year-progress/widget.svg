@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 328 120">
+<!-- A year planner: a row of days per month, passed days lit, today red. 328x120 units. -->
+<g fill="{{dim}}" font-family="{{mono}}" font-weight="700" font-size="7.5" text-anchor="middle">
+{{#each letters}}  <text x="7" y="{{y}}" dy=".35em">{{text}}</text>
+{{/each}}</g>
+{{{days}}}
+</svg>

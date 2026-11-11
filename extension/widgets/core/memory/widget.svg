@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 {{vw}} {{vh}}">
+<!-- Memory modules drawn in full. The gold pins along the bottom edge show the level: pins up to the used
+     fraction take the accent, the rest stay muted. Modules in front knock out the ones behind them. -->
+<defs>
+{{#each sticks}}<g id="mod{{uid}}-{{i}}" fill="none" stroke="currentColor" stroke-width="1.8">
+  <path d="{{outline}}"/>
+  <line x1="17.6" y1="8.4" x2="422.4" y2="8.4"/>
+  {{#if spd}}<rect x="17.6" y="31.92" width="17.6" height="17.6" rx="1"/>{{/if}}
+  {{#each chips}}<rect x="{{x}}" y="{{y}}" width="{{w}}" height="{{h}}" rx="2"/>
+  {{{dot}}}
+  {{#each lines}}<line x1="{{x1}}" y1="{{y}}" x2="{{x2}}" y2="{{y}}"/>
+  {{/each}}{{/each}}{{#each caps}}<rect x="{{x}}" y="67.2" width="5.28" height="7.56" fill="currentColor" stroke="none"/>
+  {{/each}}</g>
+{{#if next}}<clipPath id="cut{{uid}}-{{i}}"><path clip-rule="evenodd" d="M-1000 -1000H2000V2000H-1000Z M{{nx}} {{ny}}H{{nx2}}V{{ny2}}H{{nx}}Z"/></clipPath>{{/if}}
+{{/each}}</defs>
+{{#each sticks}}<g {{#if next}}clip-path="url(#cut{{uid}}-{{i}})"{{/if}}>
+  <g transform="translate({{x}} {{y}})">
+    <use href="#mod{{uid}}-{{i}}" color="{{fg}}"/>
+    {{#each fingers}}<rect x="{{x}}" y="87" width="{{fw}}" height="12" fill="{{#if lit}}{{accent}}{{else}}{{muted}}{{/if}}"/>
+    {{/each}}
+    <text x="46.2" y="37.8" dy=".35em" fill="{{fg}}" font-family="{{font}}" font-weight="700" font-size="{{labelSize}}" text-anchor="middle">{{label}}</text>
+  </g>
+</g>
+{{/each}}</svg>

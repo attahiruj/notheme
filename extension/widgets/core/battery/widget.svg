@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 120 90">
+<!-- Battery: cell outline, terminal, ten segments, charge figure, and a bolt while charging. 120x90 units. -->
+<rect x="1.35" y="1.35" width="109.3" height="47.7" rx="7.06" fill="none" stroke="{{dim}}" stroke-width="1"/>
+<rect x="113" y="15.1" width="5" height="20.2" rx="2" fill="{{dim}}"/>
+{{#each segments}}<rect x="{{x}}" y="{{inset}}" width="{{cw}}" height="36.3" rx="1.5" fill="{{color}}"/>
+{{/each}}<text x="{{labelX}}" y="{{labelY}}" dy=".35em" fill="{{labelFill}}" font-family="{{font}}" font-weight="700" font-size="{{size}}" text-anchor="middle">{{label}}</text>
+{{#if bolt}}<polygon points="{{bolt}}" fill="{{accent}}"/>{{/if}}
+</svg>

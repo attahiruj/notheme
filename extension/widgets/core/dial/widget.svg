@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 100 100">
+<!-- Watch face: bezel, minute dots, hour bars, numerals, tapered hands, red sweep hand. 100x100 units. -->
+<g fill="none" stroke-width="0.7">
+  <circle cx="50" cy="50" r="47" stroke="{{dim}}"/>
+  <circle cx="50" cy="50" r="44.2" stroke="{{line}}"/>
+  <circle cx="50" cy="50" r="23.5" stroke="{{line}}"/>
+</g>
+{{{ticks}}}
+<g stroke="{{fg}}" stroke-width="0.7">
+{{#each bars}}  <line x1="{{x1}}" y1="{{y1}}" x2="{{x2}}" y2="{{y2}}"/>
+{{/each}}</g>
+<g fill="{{fg}}" font-family="{{font}}" font-weight="700" font-size="9.4" text-anchor="middle">
+  <text x="50" y="17.1" dy=".35em">12</text>
+  <text x="82.9" y="50" dy=".35em">3</text>
+  <text x="50" y="82.9" dy=".35em">6</text>
+  <text x="17.1" y="50" dy=".35em">9</text>
+</g>
+<g fill="{{fg}}">
+  <g transform="rotate({{hourAngle}} 50 50) rotate(-90 50 50)"><polygon points="45.3,50.82 70.68,50.47 70.68,49.53 45.3,49.18"/></g>
+  <g transform="rotate({{minuteAngle}} 50 50) rotate(-90 50 50)"><polygon points="44.36,50.59 81.96,50.28 81.96,49.72 44.36,49.41"/></g>
+</g>
+<g transform="rotate({{secondAngle}} 50 50) rotate(-90 50 50)">
+  <line x1="40.6" y1="50" x2="87.6" y2="50" stroke="{{accent}}" stroke-width="0.7"/>
+  {{#if square}}<rect x="39.19" y="48.59" width="2.82" height="2.82" fill="{{accent}}"/>{{else}}<circle cx="40.6" cy="50" r="1.41" fill="{{accent}}"/>{{/if}}
+</g>
+{{#if square}}<rect x="47.4" y="47.4" width="5.2" height="5.2" fill="{{fg}}"/><rect x="48.8" y="48.8" width="2.4" height="2.4" fill="{{accent}}"/>
+{{else}}<circle cx="50" cy="50" r="2.59" fill="{{fg}}"/><circle cx="50" cy="50" r="1.18" fill="{{accent}}"/>{{/if}}
+</svg>

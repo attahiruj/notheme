@@ -1,0 +1,632 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>notheme settings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@700&family=Space+Grotesk&family=Space+Mono&display=swap">
+<style>
+  :root { --ui-bg: #111; --ui-fg: #ddd; --ui-dim: #888; --ui-line: #2a2a2a; --ui-accent: #d71921; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 12px "Space Mono", monospace; background: var(--ui-bg); color: var(--ui-fg); display: flex; height: 100vh; overflow: hidden; }
+  button { font: inherit; background: #1b1b1b; color: inherit; border: 1px solid #444; padding: 5px 10px; cursor: pointer; }
+  button:hover { border-color: #888; }
+  select, input[type=text] { font: inherit; background: #1b1b1b; color: inherit; border: 1px solid var(--ui-line); padding: 3px 6px; width: 140px; }
+  h2 { font-size: 11px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: var(--ui-dim); margin: 22px 0 8px; }
+  h2:first-child { margin-top: 0; }
+
+  #library { width: 380px; flex: none; overflow-y: auto; padding: 14px 16px 40px; border-right: 1px solid var(--ui-line); }
+  #library .hint { color: var(--ui-dim); margin: 0 0 12px; line-height: 1.5; }
+  .tiles { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+  .tile { cursor: grab; user-select: none; }
+  .tile .thumb { position: relative; overflow: hidden; background: var(--bg); border: 1px solid var(--ui-line); }
+  .tile .thumb > :first-child { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
+  .tile .name { margin-top: 5px; color: var(--ui-dim); max-width: 170px; }
+  .tile.used .thumb { border-color: var(--ui-accent); }
+  .tile.used .name::before { content: "● "; color: var(--ui-accent); }
+
+  #workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+  #bar { display: flex; gap: 10px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--ui-line); }
+  #push { background: var(--ui-accent); border-color: var(--ui-accent); color: #fff; }
+  #status { color: var(--ui-dim); flex: 1; }
+  #canvas { flex: 1; overflow: auto; padding: 4px; }
+  #frame { position: relative; }
+  .marks { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+  .mark { position: absolute; box-sizing: border-box; border: 1px dashed rgba(215, 25, 33, .55); font: 10px monospace; color: rgba(215, 25, 33, .8); padding: 3px 4px; }
+  #gridbtn.on { border-color: var(--ui-accent); color: var(--ui-accent); }
+  #screen { position: absolute; left: 0; top: 0; background: var(--bg); color: var(--fg); overflow: hidden; outline: 1px solid var(--ui-line); }
+  #desktop { position: absolute; display: flex; flex-direction: column; }
+  .item { position: relative; cursor: grab; }
+  .item.drop { outline: 2px dashed var(--accent); outline-offset: 4px; }
+  .item .x { position: absolute; top: 4px; right: 6px; z-index: 2; display: none; padding: 0 6px; line-height: 18px; background: var(--bg); color: var(--fg); border-color: var(--line); }
+  .item:hover .x { display: block; }
+  .item.cell { position: absolute; }
+  .grid { position: relative; }
+  .dropzone { position: absolute; left: 0; top: 0; pointer-events: none; }
+  body.dragging .dropzone { pointer-events: auto; }
+  .dcell { position: absolute; box-sizing: border-box; border: 1px dashed var(--dim); border-radius: 8px; opacity: 0; }
+  body.dragging .dcell { opacity: .45; }
+  .dcell.drop { opacity: 1; border-color: var(--accent); background: rgba(215, 25, 33, .12); }
+  .slot { position: absolute; border: 1px dashed var(--line); border-radius: 8px; opacity: .6; pointer-events: none; }
+  body.dragging .slot { opacity: 1; border-color: var(--dim); }
+  #main { flex: 1; display: flex; min-height: 0; }
+  #settings { flex: none; width: 340px; overflow-y: auto; padding: 14px 16px 40px; background: var(--ui-bg); border-left: 1px solid var(--ui-line); }
+  #settings.closed { display: none; }
+  #settings details.panel { border-top: 1px solid var(--ui-line); }
+  #settings details.panel:last-of-type { border-bottom: 1px solid var(--ui-line); }
+  #settings summary { list-style: none; cursor: pointer; padding: 11px 0; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ui-dim); display: flex; justify-content: space-between; align-items: center; }
+  #settings summary::-webkit-details-marker { display: none; }
+  #settings summary::after { content: '+'; font-size: 14px; }
+  #settings details[open] > summary { color: var(--ui-fg, inherit); }
+  #settings details[open] > summary::after { content: '−'; }
+  #settings details.panel > .body { padding-bottom: 8px; }
+  #settings .top { margin-bottom: 10px; }
+  #settings .hint { color: var(--ui-dim); margin: 0 0 8px; line-height: 1.5; }
+  #apply.pending { background: var(--ui-accent); border-color: var(--ui-accent); color: #fff; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+  .preset { padding: 4px; text-align: left; }
+  .preset .mini { width: 92px; height: 52px; display: block; margin-bottom: 4px; }
+  .swatches { display: flex; gap: 6px; }
+  .swatch { width: 20px; height: 20px; padding: 0; border-radius: 50%; border: 2px solid transparent; }
+  .swatch.on { border-color: #fff; }
+  input[type=color] { width: 32px; height: 24px; padding: 0; border: 1px solid var(--ui-line); background: none; }
+  .row small { color: var(--ui-dim); }
+  button.danger { border-color: var(--ui-accent); color: var(--ui-accent); }
+  .spacer { flex: 1 1 0; min-height: 0; }
+  .notheme-text { display: flex; align-items: center; justify-content: center; }
+  #panel { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--bg); border-bottom: var(--outline) solid var(--line); color: var(--fg); z-index: 3; }
+  #panel .ws { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+  #panel .clock { font-family: var(--clock-font), monospace; font-weight: 700; flex: 1; text-align: center; }
+  #panel .pill { height: 8px; width: 40px; border-radius: 4px; background: var(--fg); }
+  .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+  .row > span { flex: 1; color: var(--ui-dim); }
+  .row input[type=range] { width: 130px; } .row output { width: 38px; text-align: right; }
+
+  .card { box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; gap: 12px; background: var(--bg);
+    border: var(--outline) solid var(--line); border-radius: var(--radius); padding: var(--pad); color: var(--fg); }
+  body.borderless .card { border-color: transparent; background: transparent; padding-left: 0; padding-right: 0; }
+  .notheme-desktop-clock { font-family: var(--clock-font), monospace; font-weight: 700; line-height: 1; color: var(--fg); }
+  .notheme-card-title, .notheme-card-caption, .notheme-cal-head { font-size: 11px; color: var(--dim); }
+  .notheme-card-caption { font-size: 10px; }
+  .notheme-card-caption.greeting { font-size: 15px; }
+  .notheme-card-value { font-family: var(--clock-font), monospace; font-size: 38px; font-weight: 700; line-height: 1.1; }
+  .notheme-card-value.compact { font-size: 24px; } .notheme-card-value.greeting { font-family: "Space Grotesk"; font-size: 36px; font-weight: 400; white-space: nowrap; } .big .notheme-card-value { font-size: 64px; }
+  .alert { border-color: var(--accent); } .alert .notheme-card-value { color: var(--accent); }
+  .chart { display: block; flex: none; align-self: center; } .chart svg { display: block; }
+  .notheme-grid, .notheme-meter { display: flex; gap: 5px; } .notheme-grid { flex-direction: column; padding-top: 4px; }
+  .notheme-pip { width: 7px; height: 7px; border-radius: 4px; background: var(--line); }
+  .notheme-pip.on { background: var(--fg); } .notheme-pip.accent { background: var(--accent); }
+  .notheme-card-calendar { gap: 6px; }
+  .notheme-calendar { display: flex; flex-direction: column; gap: 1px; }
+  .notheme-cal-row { display: flex; gap: 1px; }
+  .notheme-cal-head, .notheme-cal-day { width: 17px; text-align: center; font-size: 9px; }
+  .notheme-cal-day.past { color: var(--muted); } .notheme-cal-day.today { color: var(--accent); font-weight: 700; }
+</style>
+<aside id="library"></aside>
+<div id="workspace">
+  <div id="bar"><button id="apply" title="Restyle GTK apps, icons and the wallpaper with these settings">Apply to apps</button><button id="pull">Reload from desktop</button><span id="status"></span><button id="gridbtn" title="Show grid units">Grid</button><button id="zout" title="Zoom out">−</button><button id="zfocus" title="Zoom to the widgets">Focus</button><button id="zfit" title="Whole display">Fit</button><button id="zin" title="Zoom in">+</button><button id="gear">Settings</button></div>
+  <div id="main">
+    <div id="canvas"><div id="frame"><div id="screen"><div id="panel"></div><div id="desktop"></div></div></div></div>
+    <div id="settings"></div>
+  </div>
+</div>
+<script type="module">
+import {CATALOG, ORIGINS, SHAPES, loadTemplates, templatePaths, THEME, buildView, fitColumns, fitRows, mountWidget, dropCard, normalizeWidgets, packCards, parseCells, setCell, setTheme, sizeOf, spanSize}
+    from '/extension/widgets/index.js';
+
+import {themePalette} from '/extension/style.js';
+
+// Widget drawings are SVG templates; fetch them all, then hand them to the registry.
+const templates = Object.fromEntries(await Promise.all(templatePaths().map(async path =>
+    [path, await (await fetch(`/extension/widgets/${path}`)).text()])));
+loadTemplates(path => templates[path]);
+
+const palette = await (await fetch('/palette.json')).json();
+const schema = await (await fetch('/api/schema')).json();
+const DEFAULTS = Object.fromEntries(Object.entries(schema).map(([k, v]) => [k, v.default]));
+const state = {...DEFAULTS};
+const mock = {cpu: 0.35, memory: 0.42, disk: 0.58, battery: 0.6, temperature: 62};
+let dirty = false, backend = false, saved = {}, pendingApps = false;
+
+const el = (tag, cls, text) => Object.assign(document.createElement(tag), {className: cls ?? '', textContent: text ?? ''});
+const ADAPTER = {
+    box: (vertical, cls) => el('div', cls),
+    label: (text, cls) => el('div', cls, text),
+    dot: cls => el('div', cls),
+    size: (e, w, h) => { e.style.width = `${w}px`; e.style.height = `${h}px`; },
+    // A widget's drawing is an SVG document, shown inline so it uses the page's fonts.
+    image: (w, h, render) => {
+        const box = el('div', 'chart');
+        box.style.width = `${w}px`; box.style.height = `${h}px`;
+        box._render = render;
+        box.innerHTML = box._svg = render();
+        return box;
+    },
+    redraw: box => { const svg = box._render(); if (svg !== box._svg) box.innerHTML = box._svg = svg; },
+    setText: (e, t) => { if (e.textContent !== t) e.textContent = t; },
+    setClass: (e, cls) => { e.className = cls; },
+    append: (p, c) => p.appendChild(c),
+    clear: p => p.replaceChildren(),
+    spacer: () => el('div', 'spacer'),
+    center: e => { e.style.alignSelf = 'center'; },
+    start: e => { e.style.alignSelf = 'flex-start'; },
+};
+
+// ---- mock data -------------------------------------------------------------
+const history = {cpu: []};
+function sample() {
+    const d = new Date(), GB = 1024 ** 3;
+    const time = {hour: d.getHours(), minute: d.getMinutes(), second: d.getSeconds(), year: d.getFullYear(), month: d.getMonth() + 1,
+        day: d.getDate(), week: 46, dayOfYear: Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5), daysInYear: 365,
+        daysInMonth: new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(),
+        firstWeekday: ((new Date(d.getFullYear(), d.getMonth(), 1).getDay() + 6) % 7) + 1,
+        weekdayName: d.toLocaleDateString('en', {weekday: 'long'}), monthName: d.toLocaleDateString('en', {month: 'long'})};
+    const wobble = base => Math.min(1, Math.max(0, base + (Math.random() - 0.5) * 0.25));
+    const cpu = wobble(mock.cpu);
+    for (const [k, v] of [['cpu', cpu]]) {
+        history[k].push(v); if (history[k].length > 60) history[k].shift();
+    }
+    return {time, cpu, history: {cpu: [...history.cpu]},
+        cores: Array.from({length: 12}, () => wobble(mock.cpu)), memory: {total: 30 * GB, used: mock.memory * 30 * GB},
+        disk: {total: 540 * GB, used: mock.disk * 540 * GB}, battery: {percent: Math.round(mock.battery * 100), status: 'Discharging'},
+        temperature: mock.temperature, uptime: 4 * 3600 + 1234};
+}
+
+// ---- desktop ---------------------------------------------------------------
+// The canvas is this machine's display, so placement and grid width match the real desktop.
+// The preview is the shell's primary monitor (published by the extension), not the browser's screen.
+let DW = window.screen.width, DH = window.screen.height;
+function syncMonitor() {
+    const m = /^(\d{3,5})x(\d{3,5})$/.exec(state['monitor-size'] ?? '');
+    if (m) { DW = Number(m[1]); DH = Number(m[2]); } else { DW = window.screen.width; DH = window.screen.height; }
+}
+const screen = document.getElementById('screen'), desktop = document.getElementById('desktop'), frame = document.getElementById('frame');
+const library = document.getElementById('library');
+let mounted = [], libMounted = [], frameScale = 1, zoom = 1, showGrid = true, dragId = null;
+const viewOptions = () => ({titles: state['widget-titles'], twelve: state['clock-format'] === '12h',
+    seconds: state['clock-seconds'], name: state['greeting-name']});
+const isCard = id => CATALOG.find(w => w.id === id).kind === 'card';
+
+// Mode palette with the user's accent, surface and outline colors on top, resolved by the shell's own code.
+const currentPalette = (st = state) => themePalette(palette, st['theme-mode'],
+    {accent: st['accent-color'], surface: st['surface-color'], border: st['border-color']});
+// The same shrink-to-fit factor the shell uses, so clock sizes match the real desktop.
+const uiScale = () => Math.min(DW / 1920, DH / 1080, 1.4);
+
+function applyTheme() {
+    const p = currentPalette(), r = document.documentElement.style;
+    for (const [k, v] of Object.entries({bg: p.background, fg: p.foreground, dim: p.secondary, line: p.border, accent: p.accent,
+        muted: p.muted ?? p.secondary, pad: `${state['card-padding']}px`, outline: `${state['outline-width']}px`,
+        radius: `${state['corner-radius']}px`, 'clock-font': `"${state['clock-font']}"`}))
+        r.setProperty(`--${k}`, v);
+    document.body.classList.toggle('borderless', state['card-style'] === 'borderless');
+    const borderless = state['card-style'] === 'borderless';
+    setTheme({bg: p.background, fg: p.foreground, dim: p.secondary, muted: p.muted ?? p.secondary, line: p.border, accent: p.accent, font: state['clock-font'], unit: 150,
+        gap: state['widget-gap'], pad: borderless ? 0 : state['card-padding'], border: borderless ? 0 : state['outline-width'],
+        square: state['dot-shape'] === 'square'});
+    desktop.style.opacity = state['widget-opacity'];
+    desktop.style.gap = `${Math.round(state['widget-gap'] * uiScale())}px`;
+    desktop.style.display = state['desktop-widgets'] ? '' : 'none';
+    // Miniature top bar: height, clock size, and item spacing follow their settings.
+    const panel = document.getElementById('panel'), shell = state['shell-style'];
+    panel.style.height = `${state['panel-height']}px`; panel.style.gap = `${state['panel-padding']}px`;
+    panel.style.fontFamily = `"${state['ui-font'] === 'Sans' ? 'sans-serif' : state['ui-font']}"`;
+    panel.style.fontSize = `${state['shell-font-size']}px`;
+    panel.style.opacity = shell ? 1 : 0.35;
+    panel.replaceChildren(el('span', 'ws'), el('span', '', 'Activities'),
+        Object.assign(el('span', 'clock', clockText()), {style: `font-size:${state['panel-clock-size']}px`}), Object.assign(el('span', 'pill'), {style: `height:${state['panel-icon-size'] / 2}px;width:${state['panel-icon-size'] * 2.5}px`}));
+}
+function clockText() {
+    const d = new Date(), h = state['clock-format'] === '12h' ? (d.getHours() % 12 || 12) : String(d.getHours()).padStart(2, '0');
+    return `${h}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function place() {
+    const a = state['widget-anchor'], W = DW, H = DH, mx = W * state['widget-x'], my = H * state['widget-y'];
+    const {width, height} = desktop.getBoundingClientRect();
+    const w = width / frameScale, h = height / frameScale;
+    const x = a.endsWith('left') ? mx : a.endsWith('right') ? W - w - mx : (W - w) / 2;
+    const y = a.startsWith('top') ? my : a.startsWith('bottom') ? H - h - my : (H - h) / 2;
+    desktop.style.left = `${Math.round(x)}px`; desktop.style.top = `${Math.round(y)}px`;
+}
+
+// Drop a widget on a cell. Whatever sits there is pushed to the nearest free cell, and every
+// widget ends up pinned, so nothing else drifts.
+let layout = new Map(), gridColumns = 2, gridRows = 99;
+function pinTo(id, col, row) {
+    if (!id || col < 0 || row < 0) return;
+    const ids = normalizeWidgets([...state.widgets, ...(state.widgets.includes(id) ? [] : [id])]);
+    const next = dropCard(ids.map(sizeOf), gridColumns, ids.map(x => layout.get(x) ?? null), ids.indexOf(id), {col, row}, gridRows);
+    let cells = state['widget-cells'];
+    ids.forEach((x, i) => { cells = setCell(cells, x, next[i]); });
+    state.widgets = ids; state['widget-cells'] = cells; changed();
+}
+const over = (node, on) => node.classList.toggle('drop', on);
+function dropOn(node, handler) {
+    node.ondragover = e => { if (dragId) { e.preventDefault(); over(node, true); } };
+    node.ondragleave = () => over(node, false);
+    node.ondrop = e => { e.preventDefault(); over(node, false); if (dragId) handler(e); dragId = null; document.body.classList.remove('dragging'); };
+}
+function draggable(node, id) {
+    node.draggable = true;
+    node.ondragstart = e => { dragId = id; e.dataTransfer.setData('text/plain', id); e.dataTransfer.effectAllowed = 'move'; document.body.classList.add('dragging'); };
+    node.ondragend = () => { dragId = null; document.body.classList.remove('dragging'); };
+}
+function item(id, node, cls = 'item') {
+    const wrap = el('div', cls);
+    wrap.dataset.id = id;
+    const x = el('button', 'x', '×'); x.title = 'Remove';
+    x.onclick = () => { state.widgets = state.widgets.filter(w => w !== id); changed(); };
+    wrap.append(node, x);
+    draggable(wrap, id);
+    dropOn(wrap, () => { const at = layout.get(id); if (dragId !== id && at) pinTo(dragId, at.col, at.row); });
+    return wrap;
+}
+
+function build() {
+    applyTheme();
+    desktop.replaceChildren();
+    mounted = [];
+    const options = viewOptions(), ids = normalizeWidgets(state.widgets), columns = fitColumns(state['widget-anchor'] === 'center' ? DW * 0.9 : DW - 2 * DW * state['widget-x']);
+    const pins = parseCells(state['widget-cells']);
+    // Only whole rows that fit on the display below the top margin can be reached.
+    const maxRows = fitRows(state['widget-anchor'] === 'center' ? DH * 0.9 : DH - DH * state['widget-y']);
+    gridColumns = columns; gridRows = maxRows; layout = new Map();
+    let run = [];
+    const flush = () => {
+        if (!run.length) return;
+        const ids = run, {cells, rows} = packCards(ids.map(id => sizeOf(id)), columns, ids.map(id => pins.get(id) ?? null), maxRows);
+        ids.forEach((id, i) => layout.set(id, {col: cells[i].col, row: cells[i].row}));
+        const used = Math.max(...cells.map(c => c.col + c.cols), 1), grid = el('div', 'grid'), step = THEME.unit + THEME.gap;
+        // Free cells are shown across the whole display, not just where cards already are.
+        const dropRows = Math.max(rows, maxRows);
+        grid.style.width = `${spanSize(used)}px`; grid.style.height = `${spanSize(rows)}px`;
+        const taken = new Set(cells.flatMap(c => Array.from({length: c.rows * c.cols}, (_, k) => `${c.col + k % c.cols},${c.row + Math.floor(k / c.cols)}`)));
+        for (let r = 0; r < dropRows; r++) for (let c = 0; c < columns; c++) if (!taken.has(`${c},${r}`)) {
+            const slot = el('div', 'slot');
+            Object.assign(slot.style, {left: `${c * step}px`, top: `${r * step}px`, width: `${THEME.unit}px`, height: `${THEME.unit}px`});
+            grid.append(slot);
+        }
+        ids.forEach((id, i) => {
+            const m = mountWidget(ADAPTER, buildView(id, {}, options));
+            if (isCard(id)) m.root.classList.add('card');
+            if (id === 'clock') m.root.style.fontSize = `${Math.max(48, Math.round(state['desktop-clock-size'] * uiScale()))}px`;
+            const wrap = item(id, m.root, 'item cell');
+            wrap.style.left = `${cells[i].col * step}px`; wrap.style.top = `${cells[i].row * step}px`;
+            grid.append(wrap); mounted.push([id, m]);
+        });
+        if (showGrid) { // unit markings over everything: one outlined, numbered cell per grid unit
+            const marks = el('div', 'marks');
+            for (let r = 0; r < dropRows; r++) for (let c = 0; c < columns; c++) {
+                const mark = el('div', 'mark', `${c},${r}`);
+                Object.assign(mark.style, {left: `${c * step}px`, top: `${r * step}px`, width: `${THEME.unit}px`, height: `${THEME.unit}px`});
+                marks.append(mark);
+            }
+            grid.append(marks);
+        }
+        // Every empty cell of the whole grid width, plus one spare row, is a drop target (under the cards).
+        const zone = el('div', 'dropzone'), at = (c, r) => r * columns + c;
+        zone.style.width = `${spanSize(columns)}px`; zone.style.height = `${spanSize(dropRows)}px`;
+        for (let r = 0; r < dropRows; r++) for (let c = 0; c < columns; c++) {
+            if (taken.has(`${c},${r}`)) continue;
+            const cell = el('div', 'dcell');
+            Object.assign(cell.style, {left: `${c * step}px`, top: `${r * step}px`, width: `${THEME.unit}px`, height: `${THEME.unit}px`});
+            dropOn(cell, () => pinTo(dragId, c, r));
+            zone.append(cell);
+        }
+        grid.prepend(zone);
+        // Dropping on an empty cell pins the card there; the rest keep their own cells or flow into free ones.
+        dropOn(grid, e => {
+            const box = grid.getBoundingClientRect(), k = frameScale;
+            pinTo(dragId, Math.floor((e.clientX - box.left) / k / step), Math.min(dropRows - 1, Math.floor((e.clientY - box.top) / k / step)));
+        });
+        desktop.append(grid); run = [];
+    };
+    run.push(...ids);
+    flush();
+    tick();
+    place();
+}
+
+// The library: a live thumbnail of every widget at the size it takes on the desktop.
+function buildLibrary() {
+    library.replaceChildren();
+    libMounted = [];
+    library.append(el('h2', '', 'Widgets'),
+        Object.assign(el('p', 'hint', 'Drag a widget onto the canvas, or click it to add or remove. Cards take the first free grid cell unless you drop them on a specific one.')));
+    const groups = ORIGINS.flatMap(([origin, label]) => [['Cards', 'card'], ['Text', 'text']]
+        .map(([title, kind]) => [`${label} · ${title}`, kind, origin]))
+        .filter(([, kind, origin]) => CATALOG.some(w => w.kind === kind && w.origin === origin));
+    for (const [title, kind, origin] of groups) {
+        library.append(el('h2', '', title));
+        const box = el('div', 'tiles');
+        for (const w of CATALOG.filter(w => w.kind === kind && w.origin === origin)) {
+            const m = mountWidget(ADAPTER, buildView(w.id, {}, {...viewOptions(), titles: true}));
+            m.root.classList.add(kind === 'card' ? 'card' : 'plain');
+            const k = 0.5;
+            const [cols, rows] = SHAPES[sizeOf(w.id)];
+            const tw = spanSize(cols) * k, th = spanSize(rows) * k;
+            const thumb = el('div', 'thumb');
+            Object.assign(thumb.style, {width: `${tw}px`, height: `${th}px`});
+            m.root.style.transform = `scale(${k})`;
+            thumb.append(m.root);
+            const tile = el('div', 'tile'); tile.dataset.id = w.id; tile.title = w.author ? `${w.description} · by ${w.author}` : w.description;
+            tile.append(thumb, el('div', 'name', w.name));
+            draggable(tile, w.id);
+            tile.onclick = () => { state.widgets = state.widgets.includes(w.id) ? state.widgets.filter(x => x !== w.id) : [...state.widgets, w.id]; changed(); };
+            box.append(tile); libMounted.push([w.id, m]);
+        }
+        library.append(box);
+    }
+    syncLibrary();
+}
+const syncLibrary = () => { for (const t of library.querySelectorAll('.tile')) t.classList.toggle('used', state.widgets.includes(t.dataset.id)); };
+
+function tick() {
+    const s = sample(), options = viewOptions();
+    for (const [id, m] of mounted) { m.update(buildView(id, s, options)); keepClass(m.root); }
+    for (const [id, m] of libMounted) { m.update(buildView(id, s, {...options, titles: true})); keepClass(m.root); }
+}
+// mountWidget resets a card's class on update; keep the designer's own classes.
+function keepClass(root) { if (root.className.includes('notheme-card')) root.classList.add('card'); }
+
+function fit() {
+    const canvas = document.getElementById('canvas');
+    frameScale = Math.min(1, (canvas.clientWidth - 8) / DW) * zoom;
+    screen.style.width = `${DW}px`; screen.style.height = `${DH}px`;
+    frame.style.width = `${DW * frameScale}px`; frame.style.height = `${DH * frameScale}px`;
+    screen.style.transform = `scale(${frameScale})`; screen.style.transformOrigin = '0 0';
+    place();
+}
+addEventListener('resize', fit);
+const gridBtn = document.getElementById('gridbtn');
+gridBtn.classList.toggle('on', showGrid);
+gridBtn.onclick = () => { showGrid = !showGrid; gridBtn.classList.toggle('on', showGrid); build(); };
+// Zoom is relative to the fit-to-window size; the canvas scrolls once it overflows.
+const setZoom = z => { zoom = Math.min(8, Math.max(0.25, z)); fit(); };
+// Zoom so the widget group fills the canvas, and scroll it into view.
+function focusWidgets() {
+    const canvas = document.getElementById('canvas');
+    const k = frameScale, box = desktop.getBoundingClientRect(), fb = frame.getBoundingClientRect();
+    const w = box.width / k, h = box.height / k, x = (box.left - fb.left) / k, y = (box.top - fb.top) / k, m = 24;
+    if (!w || !h) return;
+    const base = frameScale / zoom;
+    setZoom(Math.min((canvas.clientWidth - 8) / (w + 2 * m), (canvas.clientHeight - 8) / (h + 2 * m)) / base);
+    canvas.scrollLeft = Math.max(0, (x - m) * frameScale); canvas.scrollTop = Math.max(0, (y - m) * frameScale);
+}
+document.getElementById('zfocus').onclick = focusWidgets;
+document.getElementById('zin').onclick = () => setZoom(zoom * 1.25);
+document.getElementById('zout').onclick = () => setZoom(zoom / 1.25);
+document.getElementById('zfit').onclick = () => setZoom(1);
+document.getElementById('canvas').addEventListener('wheel', e => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    setZoom(zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1));
+}, {passive: false});
+addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey) || e.target.matches?.('input, select, textarea')) return;
+    if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom(zoom * 1.25); }
+    else if (e.key === '-') { e.preventDefault(); setZoom(zoom / 1.25); }
+    else if (e.key === '0') { e.preventDefault(); setZoom(1); }
+});
+
+// ---- controls --------------------------------------------------------------
+const side = document.getElementById('settings');
+const APP_KEYS = new Set(['accent-color', 'surface-color', 'border-color', 'corner-radius', 'outline-width', 'selection-style',
+    'ui-font', 'clock-font', 'app-font-size', 'scrollbar-style', 'scrollbar-width', 'scrollbar-opacity']);
+// Settings sit loose at the top when they are used alone; the rest live in collapsible panels, most used first.
+let box = side;
+const loose = () => { box = side; };
+const section = (title, hint, open = false) => {
+    const d = el('details', 'panel'), body = el('div', 'body');
+    d.open = open; d.append(el('summary', '', title), body); side.append(d); box = body;
+    if (hint) body.append(el('p', 'hint', hint));
+};
+function row(label, input, out) { const r = el('div', 'row'); r.append(el('span', '', label), input); if (out) r.append(out); box.append(r); return r; }
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+// Every edit lands here: redraw, and save whichever keys differ from what the desktop has.
+let saveTimer = null;
+function changed() {
+    dirty = true; build(); syncLibrary(); syncControls();
+    for (const key of Object.keys(DEFAULTS)) if (APP_KEYS.has(key) && !same(state[key], saved[key])) setPending(true);
+    clearTimeout(saveTimer); saveTimer = setTimeout(save, 200);
+    setStatus('Saving…');
+}
+async function save() {
+    if (!backend) return setStatus('Not connected: changes are not saved');
+    const diff = Object.fromEntries(Object.keys(DEFAULTS).filter(k => !same(state[k], saved[k])).map(k => [k, state[k]]));
+    if (!Object.keys(diff).length) return setStatus('Saved');
+    try {
+        const r = await fetch('/api/set', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Notheme': '1'}, body: JSON.stringify(diff)});
+        const body = await r.json();
+        for (const k of Object.keys(diff)) if (!body.failed?.[k] && body.ok !== false || body.ok) saved[k] = structuredClone(diff[k]);
+        dirty = !body.ok;
+        setStatus(body.ok ? 'Saved. Your desktop updates live.' : `Failed: ${JSON.stringify(body.failed ?? body.error)}`);
+    } catch (e) { setStatus(`Save failed: ${e.message}`); }
+}
+const bind = {};
+const range = key => schema[key];
+function slider(key, label, step, fmt = v => v) {
+    const { min, max } = range(key);
+    const i = Object.assign(el('input'), {type: 'range', min, max, step}), o = el('output');
+    i.oninput = () => { state[key] = schema[key].type === 'i' ? Math.round(Number(i.value)) : Number(i.value); o.textContent = fmt(state[key]); changed(); };
+    bind[key] = () => { i.value = state[key]; o.textContent = fmt(state[key]); };
+    row(label, i, o);
+}
+function choice(key, label, names) {
+    const s = el('select'); schema[key].choices.forEach((c, n) => s.add(new Option(names?.[n] ?? c, c)));
+    s.onchange = () => { state[key] = s.value; changed(); };
+    bind[key] = () => { s.value = state[key]; }; row(label, s);
+}
+function toggle(key, label, hint) {
+    const i = Object.assign(el('input'), {type: 'checkbox'});
+    i.onchange = () => { state[key] = i.checked; changed(); };
+    bind[key] = () => { i.checked = state[key]; };
+    const r = row(label, i); if (hint) r.title = hint;
+}
+function text(key, label) {
+    const i = Object.assign(el('input'), {type: 'text'});
+    i.onchange = () => { state[key] = i.value.trim(); changed(); };
+    bind[key] = () => { i.value = state[key]; }; row(label, i);
+}
+function fontChoice(key, label, names) { choice(key, label, names); }
+// '' means automatic: follow the mode. The picker shows the color in effect.
+function color(key, label, token) {
+    const i = Object.assign(el('input'), {type: 'color'}), auto = el('button', '', 'Auto');
+    i.oninput = () => { state[key] = i.value.toUpperCase(); changed(); };
+    auto.onclick = () => { state[key] = ''; changed(); };
+    bind[key] = () => { i.value = currentPalette()[token]; auto.disabled = state[key] === ''; };
+    const wrap = el('div', 'row'); wrap.style.margin = '0'; wrap.append(auto, i);
+    row(label, wrap);
+}
+function accentSwatches() {
+    const box = el('div', 'swatches');
+    for (const [name, hex] of [['Red', '#D71921'], ['Amber', '#F5A300'], ['Green', '#2BB673'], ['Blue', '#2F6BFF'], ['Violet', '#8C5CFF'], ['White', '#F2F2F2']]) {
+        const b = el('button', 'swatch'); b.title = name; b.style.background = hex; b.dataset.hex = hex;
+        b.onclick = () => { state['accent-color'] = hex; changed(); };
+        box.append(b);
+    }
+    bind['accent-color:swatches'] = () => { for (const b of box.children) b.classList.toggle('on', b.dataset.hex === state['accent-color'].toUpperCase()); };
+    row('Swatches', box);
+}
+function mockSlider(key, max) {
+    const i = Object.assign(el('input'), {type: 'range', min: 0, max, step: max / 100, value: mock[key]});
+    i.oninput = () => { mock[key] = Number(i.value); tick(); };
+    row(key, i);
+}
+const PRESETS = [
+    ['Ink', {'theme-mode': 'dark', 'corner-radius': 8}], ['Paper', {'theme-mode': 'light', 'corner-radius': 8}],
+    ['Grid', {'theme-mode': 'dark', 'corner-radius': 0, 'dot-shape': 'square'}],
+    ['Soft', {'theme-mode': 'dark', 'corner-radius': 16, 'dot-shape': 'round'}],
+    ['Mono', {'theme-mode': 'dark', 'corner-radius': 8, 'accent-color': '#F2F2F2'}],
+];
+function presets() {
+    const parent = box, list = el('div', 'presets');
+    for (const [name, values] of PRESETS) {
+        const b = el('button', 'preset'), mini = el('canvas', 'mini'), v = {...DEFAULTS, ...values};
+        mini.width = 184; mini.height = 104;
+        b.append(mini, name); b.title = `Use the ${name} preset`;
+        b.onclick = () => {
+            for (const k of ['accent-color', 'surface-color', 'border-color', 'selection-style', 'dot-shape']) state[k] = DEFAULTS[k];
+            Object.assign(state, values); changed();
+        };
+        list.append(b);
+        drawPreset(mini.getContext('2d'), v);
+    }
+    parent.append(list);
+}
+function drawPreset(c, v) {
+    const p = currentPalette(v), w = 184, h = 104, r = Math.min(v['corner-radius'], 16);
+    const rr = (x, y, ww, hh, rad) => { c.beginPath(); c.roundRect(x, y, ww, hh, Math.min(rad, ww / 2, hh / 2)); };
+    rr(1, 1, w - 2, h - 2, r + 3); c.fillStyle = p.background; c.fill(); c.strokeStyle = p.border; c.stroke();
+    c.fillStyle = p.accent; c.beginPath(); c.arc(18, 17, 6, 0, 7); c.fill();
+    c.fillStyle = p.foreground; rr(w - 56, 13, 40, 8, 4); c.fill();
+    c.fillStyle = p.border; c.fillRect(2, 34, w - 4, 1);
+    rr(14, 46, w - 28, 42, r); c.strokeStyle = p.border; c.stroke();
+    c.fillStyle = p.foreground; c.fillRect(26, 58, 50, 5); c.fillStyle = p.border; c.fillRect(26, 72, 80, 3);
+    rr(w - 60, 62, 32, 12, Math.min(r, 6)); c.fillStyle = p.accent; c.fill();
+}
+
+loose();
+box.append(Object.assign(el('p', 'hint top'), {textContent: 'Apps keep their current look until you press Apply to apps at the top. Icons and the wallpaper update too.'}));
+choice('theme-mode', 'Mode', ['Dark', 'Light']);
+toggle('desktop-widgets', 'Show widgets on the desktop');
+text('greeting-name', 'Your name');
+section('Colors', '', true);
+accentSwatches();
+color('accent-color', 'Accent', 'accent');
+color('surface-color', 'Background', 'background');
+color('border-color', 'Outline color', 'border');
+section('Presets', 'A starting point. Picking one resets your colors; fine-tune after.');
+presets();
+section('Desktop widgets', 'Drag widgets from the left onto the canvas; drop a card on any grid cell to pin it there.', true);
+choice('widget-anchor', 'Anchor', ['Top left', 'Top right', 'Bottom left', 'Bottom right', 'Center']);
+slider('widget-x', 'Distance from side', 0.01, v => `${Math.round(v * 100)}%`);
+slider('widget-y', 'Distance from top', 0.01, v => `${Math.round(v * 100)}%`);
+slider('widget-gap', 'Space between widgets', 1);
+slider('card-padding', 'Space inside cards', 1);
+slider('widget-opacity', 'Opacity', 0.05, v => `${Math.round(v * 100)}%`);
+choice('card-style', 'Cards', ['Outlined', 'Borderless']);
+choice('dot-shape', 'Meter dots', ['Round', 'Square']);
+toggle('widget-titles', 'Card titles');
+section('Clock');
+choice('clock-format', 'Time format', ['24-hour', '12-hour']);
+toggle('clock-seconds', 'Show seconds');
+slider('desktop-clock-size', 'Clock size', 4);
+choice('clock-font', 'Clock font', ['Doto (dot matrix)', 'Space Mono', 'Space Grotesk']);
+section('Shape');
+slider('corner-radius', 'Corner roundness', 1);
+slider('outline-width', 'Outline thickness', 1);
+choice('selection-style', 'Selection', ['Accent outline', 'Solid accent fill']);
+section('Text');
+choice('ui-font', 'Interface font', ['Space Grotesk', 'Space Mono', 'System default']);
+slider('shell-font-size', 'Top bar and menu text', 1);
+slider('app-font-size', 'App text', 1);
+section('Top bar');
+slider('panel-height', 'Height', 1);
+slider('panel-clock-size', 'Clock size', 1);
+slider('panel-icon-size', 'Status icon size', 1);
+slider('panel-padding', 'Space between items', 1);
+section('Menus');
+slider('popup-padding', 'Padding', 1);
+section('Scrollbars');
+choice('scrollbar-style', 'Color', ['Accent', 'Text color']);
+slider('scrollbar-width', 'Thickness', 1);
+slider('scrollbar-opacity', 'Visibility', 0.05, v => `${Math.round(v * 100)}%`);
+section('Lock screen', 'Only the look changes. Unlocking works exactly as before.');
+toggle('lock-style', 'Style the lock screen');
+slider('lock-clock-size', 'Clock size', 2);
+section('Advanced');
+toggle('shell-style', 'Style the shell');
+{
+    const reset = el('button', 'danger', 'Reset all…');
+    reset.onclick = async () => {
+        if (!confirm('Reset all notheme settings to their defaults? Installed themes and backups are untouched.')) return;
+        const r = await (await fetch('/api/reset', {method: 'POST', headers: {'X-Notheme': '1'}})).json();
+        setStatus(r.ok ? 'Reset to defaults' : `Reset failed: ${r.error}`);
+        await load();
+    };
+    row('Reset all settings', reset);
+}
+section('Preview data', 'Fake readings for the cards here; not saved.');
+for (const [k, m] of [['cpu', 1], ['memory', 1], ['disk', 1], ['battery', 1], ['temperature', 100]]) mockSlider(k, m);
+
+const syncControls = () => { for (const f of Object.values(bind)) f(); };
+const status = document.getElementById('status'), pull = document.getElementById('pull'), applyBtn = document.getElementById('apply');
+function setStatus(t) { status.textContent = t; }
+function setPending(on) {
+    pendingApps = on; applyBtn.classList.toggle('pending', on);
+    applyBtn.textContent = on ? 'Apply changes to apps' : 'Apply to apps';
+}
+applyBtn.onclick = async () => {
+    applyBtn.disabled = true; setStatus('Applying to apps…');
+    try {
+        await save();
+        const r = await (await fetch('/api/apply-apps', {method: 'POST', headers: {'X-Notheme': '1'}})).json();
+        if (r.ok) { setPending(false); setStatus('Applied. Reopen apps to see the change. Undo with ./notheme restore.'); }
+        else setStatus(`Not applied: ${r.error}`);
+    } catch (e) { setStatus(`Not applied: ${e.message}`); }
+    applyBtn.disabled = false;
+};
+document.getElementById('gear').onclick = () => side.classList.toggle('closed');
+
+async function load() {
+    try {
+        const r = await fetch('/api/state');
+        Object.assign(state, DEFAULTS, await r.json());
+        backend = true; saved = structuredClone(state); setStatus('Loaded from your desktop settings');
+    } catch { backend = false; setStatus('Not connected: changes are not saved'); }
+    syncMonitor(); fit();
+    dirty = false; syncControls(); buildLibrary(); build();
+}
+pull.onclick = load;
+
+fit();
+await load();
+requestAnimationFrame(focusWidgets); // open zoomed on the widgets; Fit shows the whole display
+setInterval(tick, 1000);
+let seen = await (await fetch('/__stamp')).text();
+setInterval(async () => {
+    try { const now = await (await fetch('/__stamp')).text(); if (now !== seen && !dirty) location.reload(); } catch {}
+}, 700);
+</script>

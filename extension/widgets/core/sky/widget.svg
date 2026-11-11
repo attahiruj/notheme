@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{{w}}" height="{{h}}" viewBox="0 0 100 100">
+<!-- Sun by day, moon phase by night. 100x100 units. The lit shape is clipped to show craters through it. -->
+{{{ring}}}
+{{#if day}}<g transform="translate(50 50)">
+  <circle r="{{sunr}}" fill="{{fg}}"/>
+  <g stroke="{{fg}}" stroke-linecap="round">
+{{#each rays}}    <line x1="{{x1}}" y1="{{y1}}" x2="{{x2}}" y2="{{y2}}" stroke-width="{{w}}"/>
+{{/each}}  </g>
+</g>
+{{else}}<circle cx="50" cy="50" r="41" fill="{{line}}"/>
+<g transform="translate(50 50)">
+{{#each craters}}  <circle cx="{{x}}" cy="{{y}}" r="{{r}}" fill="none" stroke="{{dim}}" stroke-opacity="0.3" stroke-width="0.6"/>
+{{/each}}{{#if lit}}  <clipPath id="moon{{uid}}"><path d="{{shape}}" transform="{{flip}}"/></clipPath>
+  <path d="{{shape}}" transform="{{flip}}" fill="{{fg}}"/>
+  <g clip-path="url(#moon{{uid}})">
+{{#each craters}}    <circle cx="{{x}}" cy="{{y}}" r="{{r}}" fill="{{dim}}" fill-opacity="0.55"/>
+    <circle cx="{{x}}" cy="{{y}}" r="{{r}}" fill="none" stroke="{{line}}" stroke-opacity="0.9" stroke-width="0.6"/>
+{{/each}}  </g>
+{{/if}}</g>
+{{/if}}</svg>

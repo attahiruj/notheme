@@ -1,0 +1,9 @@
+{
+  "uuid": "notheme@local",
+  "name": "notheme",
+  "description": "Nothing-inspired monochrome shell, dot clock, workspace indicators and desktop system cards. A GNOME-native adaptation of glyph-rice.",
+  "shell-version": ["50"],
+  "session-modes": ["user", "unlock-dialog"],
+  "settings-schema": "org.gnome.shell.extensions.notheme",
+  "version": 2
+}
